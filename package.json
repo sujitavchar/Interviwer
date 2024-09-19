@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev" : "nodemon -r dotenv/config  --experimental-json-modules src/index.js " ,
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sujit Avchar",
@@ -12,5 +13,10 @@
   "devDependencies": {
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "mongoose": "^8.6.3"
   }
 }
