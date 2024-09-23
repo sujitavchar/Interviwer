@@ -1,14 +1,23 @@
 import dotenv from "dotenv";
 import connectDB from "./db/connection.js";
+import app from "./app.js"
 
 dotenv.config({
     path: "./.env"
 });
+ 
+const startserver = async ()=> {
+    try {
+        await connectDB();
+        app.listen(process.env.PORT || 4000, ()=>{
+            console.log(`Server is listening on port ${process.env.PORT || 4000}`)
+        })
+    } catch (error) {
+        console.log("Connetion with database FAILED ", error);
+    }
+}; 
 
-connectDB();
-
-
-
+startserver();
 // const app = express();
 // import express from "express";
 
