@@ -1,1 +1,1 @@
-export const DB_NAME = "interviewer"
+export const DB_NAME = "InterviwerDB"
