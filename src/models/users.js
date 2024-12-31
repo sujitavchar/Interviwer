@@ -37,10 +37,17 @@ const userSchema = new Schema({
     },
     profileImg : {
         type: String, // cloudinary url
+        default : ""
     },
     banner : {
         type: String , //cloudinary url
     },
+    // myPosts: [ // New field to store posts created by the user
+    //     {
+    //         type: Schema.Types.ObjectId,
+    //         ref: "Post"
+    //     }
+    // ],
     savedPosts : [
         {
             type: Schema.Types.ObjectId,

@@ -31,7 +31,7 @@ const registerUser = asynchandler( async (req,res)=>{
     }
 
     //Check if user already exists
-    const dublicateUser = await  User.findOne({fullName});
+    const dublicateUser = await  User.findOne({fullName,email});
     if(dublicateUser){
         throw new apiError(409, "User already exists ");
     }
@@ -39,7 +39,7 @@ const registerUser = asynchandler( async (req,res)=>{
     //check if email id already exists
     const dublicateEmail = await User.findOne({email});
     if(dublicateEmail){
-        throw new apiError(410,"")
+        throw new apiError(410,"Email already registered")
     }
 
     //check for valid mobile no
@@ -62,11 +62,24 @@ const registerUser = asynchandler( async (req,res)=>{
 
     // also may check for banner and profile image - optional
     // to do later
-    const profileImageLocalpath= req.files?.profileImg[0]?.path;
-    if(!profileImageLocalpath){
-        throw new apiError(411,"Profile Image is required");
+    //const profileImageLocalpath= req.files?.profileImg[0]?.path; -> optional way gives error if profileImg is empty.
+    let profileImageLocalpath;
+    if(req.files && Array.isArray(req.files.profileImg) && req.files.profileImg.length>0){
+        profileImageLocalpath = req.files.profileImg[0].path;
     }
-    const profileImageDetails = await uploadOnCloud(profileImageLocalpath);
+    else{
+        profileImageLocalpath= "";
+    }
+
+    // if(!profileImageLocalpath){
+    //     throw new apiError(411,"Profile Image is required");
+    // }
+    let profileImageDetails, profileImageUrl;
+    if(profileImageLocalpath !== "") {
+        profileImageDetails = await uploadOnCloud(profileImageLocalpath);
+        profileImageUrl = profileImageDetails.url;
+    }
+
     console.log("profileImageDetails",profileImageDetails.url);
 
     //Insert user into the collection
@@ -79,7 +92,7 @@ const registerUser = asynchandler( async (req,res)=>{
             collegeName: collegeName || "",
             companyName: companyName || "",
             mobileNo,
-            profileImg: profileImageDetails.url || "",
+            profileImg: profileImageUrl, //add banner later
         });
 
         const newUser = await User.findById(user._id).select("-password -refreshToken");

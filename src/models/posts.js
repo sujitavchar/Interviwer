@@ -36,13 +36,15 @@ const postSchema = new Schema({
     image : {
         type: String, //cloudinary url
     },
-    video: {
-        type: String, //cloudinaryurl
-    },
+    // video: {
+    //     type: String, //cloudinaryurl
+    // },
     likes: {
         type: Number,
         default : 0
     },
+
+
     owner : {
         type: Schema.Types.ObjectId,
         ref : "User"
@@ -50,6 +52,10 @@ const postSchema = new Schema({
     isPublished: {
         type: Boolean,
         default: true
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
     },
     views: {
         type: Number,
