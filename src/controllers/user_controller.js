@@ -4,7 +4,7 @@ import {User} from "../models/users.js";
  import { uploadOnCloud } from "../utils/cloudinary.js";
 import {apiResponse} from "../utils/apiResponse.js";
 
-
+//sub-function
 const generateAccessAndRefreshToken = async (userId)=>{
     try {
         const user = await User.findById(userId);
@@ -12,7 +12,9 @@ const generateAccessAndRefreshToken = async (userId)=>{
         const refreshToken =  user.generateRefreshToken();
 
         user.refreshToken = refreshToken;
+        
         await user.save({validateBeforeSave : false});
+        
 
         return {accessToken, refreshToken};
 
@@ -66,13 +68,13 @@ const registerUser = asynchandler( async (req,res)=>{
         
     
         const sanitizedNumber = String(number).trim();
-        console.log("Sanitized Mobile Number:", sanitizedNumber);
+       // console.log("Sanitized Mobile Number:", sanitizedNumber);
     
         // Check if it contains only numeric characters and is exactly 10 digits
         const isNumeric = /^\d+$/.test(sanitizedNumber);
         const isValidLength = sanitizedNumber.length === 10;
     
-        console.log("Is Numeric:", isNumeric, "Is Valid Length:", isValidLength);
+        //console.log("Is Numeric:", isNumeric, "Is Valid Length:", isValidLength);
         return isNumeric && isValidLength;
     }
     if(!isValidMobileNumber(mobileNo)){
@@ -82,28 +84,30 @@ const registerUser = asynchandler( async (req,res)=>{
     // also may check for banner and profile image - optional
     // to do later
     //const profileImageLocalpath= req.files?.profileImg[0]?.path; -> optional way gives error if profileImg is empty.
-    let profileImageLocalpath;
-    if(req.files && Array.isArray(req.files.profileImg) && req.files.profileImg.length>0){
+    let profileImageLocalpath = "";
+    let profileImageDetails, profileImageUrl;
+    
+    // Safely handle the profileImg field
+    if (req.files && Array.isArray(req.files.profileImg) && req.files.profileImg.length > 0) {
         profileImageLocalpath = req.files.profileImg[0].path;
     }
-    else{
-        profileImageLocalpath= "";
+    
+    // Upload to the cloud if a local path exists
+    if (profileImageLocalpath) {
+        try {
+            profileImageDetails = await uploadOnCloud(profileImageLocalpath);
+            profileImageUrl = profileImageDetails.url;
+        } catch (uploadError) {
+            console.error("Error uploading profile image:", uploadError);
+            throw new apiError(500, "Failed to upload profile image");
+        }
     }
-
-    // if(!profileImageLocalpath){
-    //     throw new apiError(411,"Profile Image is required");
-    // }
-    let profileImageDetails, profileImageUrl;
-    if(profileImageLocalpath !== "") {
-        profileImageDetails = await uploadOnCloud(profileImageLocalpath);
-        profileImageUrl = profileImageDetails.url;
-    }
-
-    console.log("profileImageDetails",profileImageDetails.url);
-
-    //Insert user into the collection
- 
+    
+    // Log the result for debugging
+    console.log("profileImageDetails", profileImageDetails ? profileImageDetails.url : "No profile image uploaded");
+    
     try {
+        // Insert user into the database
         const user = await User.create({
             fullName,
             email,
@@ -111,12 +115,13 @@ const registerUser = asynchandler( async (req,res)=>{
             collegeName: collegeName || "",
             companyName: companyName || "",
             mobileNo,
-            profileImg: profileImageUrl, //add banner later
+            profileImg: profileImageUrl || "", // Use empty string if no image URL is available
         });
-
+    
+        // Retrieve the newly created user without sensitive fields
         const newUser = await User.findById(user._id).select("-password -refreshToken");
-
-        return res.status(201).json(
+    
+        return res.status(200).json(
             new apiResponse(200, newUser, "User registered successfully")
         );
     } catch (error) {
@@ -134,7 +139,7 @@ const loginUser = asynchandler( async (req,res)=>{
         throw new apiError(400, "Email and Fullname are required");
     }
 
-    const user = await User.findOne({email});
+    let user = await User.findOne({email});
     if(!user){
         throw new apiError(404,"User doesn't exists");
     }
@@ -146,6 +151,7 @@ const loginUser = asynchandler( async (req,res)=>{
     }
     
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+    
     user = await User.findById(user._id).select("-password -refreshToken"); //updates user object with newly generated refreshtoken
 
     const options = {
@@ -162,4 +168,32 @@ const loginUser = asynchandler( async (req,res)=>{
             )
 })
 
-export { registerUser, loginUser};
+const logoutUser = asynchandler( async (req,res)=>{
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                "refreshToken": undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .clearCookie("accessToken",options)
+        .clearCookie("refreshToken",options)
+        .json(
+            new apiResponse(200, {}, "User logged out successfully")
+        )
+})
+
+
+export { registerUser, loginUser, logoutUser};
