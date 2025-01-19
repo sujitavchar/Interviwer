@@ -3,6 +3,7 @@ import {apiError} from "../utils/errorHandler.js";
 import {User} from "../models/users.js";
  import { uploadOnCloud } from "../utils/cloudinary.js";
 import {apiResponse} from "../utils/apiResponse.js";
+import jwt from "jsonwebtoken";
 
 //sub-function
 const generateAccessAndRefreshToken = async (userId)=>{
@@ -168,32 +169,129 @@ const loginUser = asynchandler( async (req,res)=>{
             )
 })
 
-const logoutUser = asynchandler( async (req,res)=>{
-    await User.findByIdAndUpdate(
+const logoutUser = asynchandler(async (req, res) => {
+    
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    
+
+    const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set:{
-                "refreshToken": undefined
+            $unset: {
+                refreshToken: "" // Value doesn't matter; MongoDB will remove the field.
             }
         },
         {
             new: true
         }
-    )
-
+    );
+    
     const options = {
         httpOnly: true,
-        secure: true
-    }
+        secure: true,
+    };
 
     return res
         .status(200)
-        .clearCookie("accessToken",options)
-        .clearCookie("refreshToken",options)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new apiResponse(200, {}, "User logged out successfully"));
+});
+
+const renewAccessToken = asynchandler(async (req,res) =>{
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+    if(!incomingRefreshToken){
+        throw new apiError(404, "Unauthorised request")
+    }
+
+    const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await User.findById(decodedToken?._id);
+
+    if(!user){
+        throw new apiError(404, "User not found")
+    }
+
+    if(incomingRefreshToken !== user?.refreshToken){
+        throw new apiError(404, "Refresh Token expired or used")
+    }
+
+    const options = {
+        httpOnly: true,
+        secure: true,
+    };
+
+    const {newAccessToken, newRefreshToken} = await generateAccessAndRefreshToken(user._id);
+
+    return res
+        .status(200)
+        .cookie("accessToken", newAccessToken,options)
+        .cookie("refreshtoken", newRefreshToken, options)
         .json(
-            new apiResponse(200, {}, "User logged out successfully")
+            new apiResponse(200,{},"Access Token renewed")
         )
-})
 
 
-export { registerUser, loginUser, logoutUser};
+} )
+
+const updatePassword = asynchandler(async (req, res) => {
+    const {oldpassword, newpassword} = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    const isPasswordCorrect =  await user.isPasswordCorrect(oldpassword);
+
+    if(!isPasswordCorrect){
+        throw new apiError(400, "Invalid Password");
+    }
+
+    user.password = newpassword;
+    await user.save({validateBeforeSave: false});
+
+    return res
+        .status(200)
+        .json(
+            new apiResponse(200, {}, "Password updated successfully")
+        )
+
+});
+
+const updateFullname= asynchandler(async (req, res) => {
+    const { newfullname} = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    if(!user){
+        throw new apiError(400, "User doesn't exist");
+    }
+
+    user.fullName = newfullname;
+    await user.save({validateBeforeSave: false});
+
+    return res
+        .status(200)
+        .json(
+            new apiResponse(200, {}, "Name updated successfully")
+        )
+
+});
+
+const getCurrentUser = asynchandler(async (req,res) =>{
+    return res
+        .status(200)
+        .json(
+            200,
+            req.user,
+            "User fetched successfully"
+        )
+} )
+
+
+
+
+export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname};

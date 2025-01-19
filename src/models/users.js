@@ -48,6 +48,21 @@ const userSchema = new Schema({
     //         ref: "Post"
     //     }
     // ],
+
+    followers: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+
+    following: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User" // Optional: To track users this user is following
+        }
+    ],
+
     savedPosts : [
         {
             type: Schema.Types.ObjectId,
