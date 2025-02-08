@@ -291,7 +291,27 @@ const getCurrentUser = asynchandler(async (req,res) =>{
         )
 } )
 
+const updateProfileImage = asynchandler(async (req,res )=>{
+    const localPath = req.file?.path;   //extract file from local system 
+    if(!localPath) {
+        throw new apiError(400, "Profile Image not found"); 
+    } 
+    const publicURL  = await uploadOnCloud(localPath);
+    const user  = await  User.findById(req.user._id);
+    user.profileImg = publicURL;
+
+    await user.save({validateBeforeSave: false});
+
+    return res
+        .status(200)
+        .json(
+            new apiResponse(200, {}, "Profile Image  updated successfully")
+        )    
+})
+
+//To do : Make function to update cover Image
 
 
 
-export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname};
+
+export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname, updateProfileImage};
