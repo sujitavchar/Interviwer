@@ -6,8 +6,14 @@ const userSchema = new Schema({
     fullName:{
         type : String,
         required : true,
-        index : true,
         trim : true
+    },
+    userName:{
+        type: String,
+        required:true,
+        index : true,
+        unique : true,
+        trim: true
     },
     email:{
         type : String,
@@ -42,26 +48,26 @@ const userSchema = new Schema({
     banner : {
         type: String , //cloudinary url
     },
-    // myPosts: [ // New field to store posts created by the user
+    myPosts: [ // New field to store posts created by the user
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Post"
+        }
+    ],
+
+    // followers: [ //Building this feature with  Follow schema, to optimise the opeartions on followers
     //     {
     //         type: Schema.Types.ObjectId,
-    //         ref: "Post"
+    //         ref: "User"
     //     }
     // ],
 
-    followers: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
-
-    following: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User" // Optional: To track users this user is following
-        }
-    ],
+    // following: [
+    //     {
+    //         type: Schema.Types.ObjectId,
+    //         ref: "User" // Optional: To track users this user is following
+    //     }
+    // ],
 
     savedPosts : [
         {

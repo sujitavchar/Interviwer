@@ -5,9 +5,9 @@ import {User} from "../models/users.js";
 
 export const verifyJWt = asynchandler(async (req, res, next) => {
     try {
-            const token = req.cookies?.accessToken || req.header("Authorization")?.replace("bearer ", "");
+            const token = req.cookies?.accessToken || req.header("Authorization")?.replace(/Bearer\s/i, ""); 
             if(!token){
-                throw new apiError(400, "Unauthorized request");
+                throw new apiError(401, "Unauthorized request");
             }
         
             const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);

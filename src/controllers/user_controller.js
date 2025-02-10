@@ -107,10 +107,15 @@ const registerUser = asynchandler( async (req,res)=>{
     // Log the result for debugging
     console.log("profileImageDetails", profileImageDetails ? profileImageDetails.url : "No profile image uploaded");
     
+    const randomNum = Math.floor(10000 + Math.random() * 90000); // 5-digit number
+    const userName = fullName.replace(/\s+/g, "").toLowerCase() + randomNum;
+
+
     try {
         // Insert user into the database
         const user = await User.create({
             fullName,
+            userName,
             email,
             password,
             collegeName: collegeName || "",
@@ -311,7 +316,80 @@ const updateProfileImage = asynchandler(async (req,res )=>{
 
 //To do : Make function to update cover Image
 
+const getUserProfile = asynchandler( async (req,res) =>{
+    const username = req.params;
+    if(!username?.trim()){
+        throw new apiError(400, "User Name is undefined")
+    }
+    //agregation pipeline for sending profile data, when profile is viewed
+    const profile = await User.aggregate(
+        [
+            {
+                $match : {
+                    userName : username?.toLowerCase()
+                }
+            },
+            {
+                $lookup: {
+                    from : "follows",
+                    localField : "_id",
+                    foreignField : "followingTo",
+                    as :"total_followers"
+                }
+            },
+            {
+                $lookup: {
+                    from : "follows",
+                    localField : "_id",
+                    foreignField : "follower",
+                    as :"following_to"
+                }
+            },
+            {
+                $addFields: {
+                    followersCount :{
+                        $size : "$total_followers"
+                    },
+                    followingToCount :{
+                        $size : "$following_to"
+                    },
+                    isFollowed : {
+                        $cond:{
+                            $if: {$in :[req.user?._id, "total_followers.follower"]},
+                            $then: true,
+                            $else : false
+                        }
+                    }
+                }
+            },
+            {
+                $project :{
+                    fullName:1,
+                    userName:1,
+                    email:1,
+                    collegeName:1,
+                    companyName:1,
+                    profileImg:1,
+                    myPosts:1,
+                    savedPosts :1,
+                    likedPosts :1,
+                    followersCount:1,
+                    followingToCount:1,
+                    createdAt:1
+                }
+            }
+        ]
+    )
+
+    if(!profile?.length){
+        throw new apiError(404, "User not found");
+    }
+
+    return res.status(200).json(
+        new apiResponse(200, profile[0], "User profile fetched successfullly")
+    )
+
+} )
 
 
-
-export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname, updateProfileImage};
+export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname, updateProfileImage, getUserProfile};
