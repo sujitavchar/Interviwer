@@ -392,4 +392,51 @@ const getUserProfile = asynchandler( async (req,res) =>{
 } )
 
 
-export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname, updateProfileImage, getUserProfile};
+const getMyPosts = asynchandler(async (req,res ) => {
+    const user = await User.aggregate(
+        [
+            {
+                $match : {
+                    _id : new mongoose.Types.ObjectId(req.user._id)  // converts _id to mongo db id 'ObjectId(2143143434)'
+                }
+            },
+            {
+                $lookup :{ // to get all posts doc of ids in myPosts array 
+                    from: "posts",
+                    localField : "myPosts",
+                    foreignField: "_id",
+                    as: "myPosts",
+                    pipeline : [
+                        {
+                            $lookup:{   //to get the details of owner of the post
+                                from :"users",
+                                localField:"owner",
+                                foreignField : "_id",
+                                as : "owner",
+                                pipeline:[
+                                    {
+                                        $project:{ //only show required fields of the owner
+                                            fullName :1 //send more if required
+                                        }
+                                    },
+                                    {
+                                        $addFields:{ //to convert owner array into object, makes easier for fornt end
+                                            owner:{
+                                                $first: "$owner"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    )
+
+    return res.status(200)
+        .json(new apiResponse(200, user[0].myPosts , "Posts fetched successfully"));
+})
+
+export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname, updateProfileImage, getUserProfile, getMyPosts};
