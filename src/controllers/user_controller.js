@@ -318,9 +318,10 @@ const updateProfileImage = asynchandler(async (req,res )=>{
 
 const getUserProfile = asynchandler( async (req,res) =>{
     const {username} = req.params;
-    if(!username?.trim()){
-        throw new apiError(400, "User Name is undefined")
+    if (!username || typeof username !== "string" || !username.trim()) {
+        throw new apiError(400, "Username is undefined or invalid");
     }
+    
     //agregation pipeline for sending profile data, when profile is viewed
     const profile = await User.aggregate(
         [
@@ -355,7 +356,7 @@ const getUserProfile = asynchandler( async (req,res) =>{
                     },
                     isFollowed : {
                         $cond:{
-                            $if: {$in :[req.user?._id, "total_followers.follower"]},
+                            $if: {$in :[req.user?._id, "$total_followers.follower"]},
                             $then: true,
                             $else : false
                         }
@@ -382,7 +383,7 @@ const getUserProfile = asynchandler( async (req,res) =>{
     )
 
     if(!profile?.length){
-        throw new apiError(404, "User not found");
+        throw new apiError(400, "User not found");
     }
 
     return res.status(200).json(
