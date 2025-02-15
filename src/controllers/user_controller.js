@@ -317,7 +317,7 @@ const updateProfileImage = asynchandler(async (req,res )=>{
 //To do : Make function to update cover Image
 
 const getUserProfile = asynchandler( async (req,res) =>{
-    const username = req.params;
+    const {username} = req.params;
     if(!username?.trim()){
         throw new apiError(400, "User Name is undefined")
     }
