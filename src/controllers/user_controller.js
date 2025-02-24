@@ -1,9 +1,11 @@
 import {asynchandler} from "../utils/asynchandler.js"
 import {apiError} from "../utils/errorHandler.js";
 import {User} from "../models/users.js";
+import {Post} from "../models/posts.js"
  import { uploadOnCloud } from "../utils/cloudinary.js";
 import {apiResponse} from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 //sub-function
 const generateAccessAndRefreshToken = async (userId)=>{
@@ -395,53 +397,46 @@ const getUserProfile = asynchandler( async (req,res) =>{
 } )
 
 
-const getMyPosts = asynchandler(async (req,res ) => {
-    const user = await User.aggregate(
-        [
-            {
-                $match : {
-                    _id : new mongoose.Types.ObjectId(req.user._id)  // converts _id to mongo db id 'ObjectId(2143143434)'
-                }
-            },
-            {
-                $lookup :{ // to get all posts doc of ids in myPosts array 
-                    from: "posts",
-                    localField : "myPosts",
-                    foreignField: "_id",
-                    as: "myPosts",
-                    pipeline : [
-                        {
-                            $lookup:{   //to get the details of owner of the post
-                                from :"users",
-                                localField:"owner",
-                                foreignField : "_id",
-                                as : "owner",
-                                pipeline:[
-                                    {
-                                        $project:{ //only show required fields of the owner
-                                            fullName :1,
-                                            title: 1 //send more if required
-                                        }
-                                    },
-                                    {
-                                        $addFields:{ //to convert owner array into object, makes easier for fornt end
-                                            owner:{
-                                                $first: "$owner"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                }
+const getMyPosts = asynchandler(async (req, res) => {
+    const posts = await Post.aggregate([
+        {
+            $match: {
+                owner: new mongoose.Types.ObjectId(req.user._id) // Find posts where owner = logged-in user
             }
-        ]
-    )
+        },
+        {
+            $lookup: {
+                from: "users",              // Lookup owner details from users collection
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerDetails"
+            }
+        },
+        {
+            $unwind: "$ownerDetails"       // Convert ownerDetails array into object
+        },
+        {
+            $project: {                    // Return only required fields
+                _id: 1,
+                title: 1,
+                text: 1,
+                image: 1,
+                isPublished: 1,
+                views: 1,
+                createdAt: 1,
+                "ownerDetails.fullName": 1 // Get only owner's name
+            }
+        }
+    ]);
 
-    return res.status(200)
-        .json(new apiResponse(200, user[0].myPosts , "Posts fetched successfully"));
-})
+    if (!posts.length) {
+        throw new apiError(404, "No posts found");
+    }
+
+    return res.status(200).json(new apiResponse(200, posts, "Posts fetched successfully"));
+});
+
+
 
 
 

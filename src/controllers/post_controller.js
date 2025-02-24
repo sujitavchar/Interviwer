@@ -3,7 +3,7 @@ import {apiError} from "../utils/errorHandler.js";
 import {Post} from "../models/posts.js";
  import { uploadOnCloud } from "../utils/cloudinary.js";
 import {apiResponse} from "../utils/apiResponse.js";
-import jwt from "jsonwebtoken";
+
 
 
 const getALLPosts = asynchandler(async (req,res) => {
@@ -59,8 +59,103 @@ const createPost  = asynchandler(async (req,res)=>{
         console.error("Error while creating post:", error);
         throw new apiError(500, "Failed to create post");
     }
+})
+
+const getPostById = asynchandler(async (req,res) =>{
+    const {postId} = req.params;
+
+    if(!postId){
+        throw new apiError(500, "No post id in parameters");
+    }
+
+    try {
+        const post = await Post.findById(postId);
     
+        if(!post){
+            throw new apiError(404, "Post not found");
+        }
+        post.views++;
+        await post.save({validateBeforeSave: false});
+
+        return res.status(200).json(
+            new apiResponse(200, post, "Post fetched successfully")
+        );
+
+    } catch (error) {
+        console.error(`Error while fetching post of ${postId}:`, error);
+        throw new apiError(500, "Error while fetching post");
+    }
+
+ })
+
+
+const updatePost = asynchandler(async (req, res) => {
+    const {postId, newtitle, newtext} = req.body;
+
+    const post = await Post.findById(postId);
+
+    if(!post){
+        throw new apiError(400, "Post doesn't exist");
+    }
+
+    post.title = newtitle;
+    post.text = newtext;
+
+    await post.save({validateBeforeSave: false});
+
+    return res
+        .status(200)
+        .json(
+            new apiResponse(200, {}, "Post updated successfully")
+        )
+
+});
+
+
+const deletePost = asynchandler(async (req,res)=>{
+    const {postId} = req.body;
+
+    if(!postId){
+        throw new apiError(403, "Please provide post id to delete");
+    }
+
+    const post = await Post.findById(postId);
+
+    if(!post){
+        throw new apiError(404, "Post notfound");
+    }
+   
+    if (post.owner.toString() !== req.user._id.toString()) {
+        throw new apiError(403, "You are not authorized to delete this post");
+    }
+
+    await post.deleteOne();  
+
+    return res.status(200).json( new apiResponse(200, "Post deleted successfully"));
 })
 
 
-export {getALLPosts, createPost};
+const togglePublishStatus = asynchandler( async (req, res) =>{
+    const {postId} = req.body;
+
+    if(!postId) {
+        throw new apiError(404, "Please provide post id ");
+    }
+
+    const post = await Post.findById(postId) ;
+
+    if(post.isPublished){
+        post.isPublished = false;
+    }
+    else{
+        post.isPublished = true; 
+    }
+
+    await post.save({validateBeforeSave: false});
+
+    return res.status(200).json( new apiResponse(200, post,"Status changed"));
+})
+
+
+
+export {getALLPosts, createPost,getPostById, updatePost,deletePost, togglePublishStatus};
