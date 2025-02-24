@@ -319,7 +319,7 @@ const updateProfileImage = asynchandler(async (req,res )=>{
 const getUserProfile = asynchandler( async (req,res) =>{
     const {username} = req.params;
     if (!username || typeof username !== "string" || !username.trim()) {
-        throw new apiError(400, "Username is undefined or invalid");
+        throw new apiError(404, "Username is undefined or invalid");
     }
     
     //agregation pipeline for sending profile data, when profile is viewed
@@ -356,9 +356,9 @@ const getUserProfile = asynchandler( async (req,res) =>{
                     },
                     isFollowed : {
                         $cond:{
-                            $if: {$in :[req.user?._id, "$total_followers.follower"]},
-                            $then: true,
-                            $else : false
+                            if: {$in :[req.user?._id, "$total_followers.follower"]},
+                            then: true,
+                            else : false
                         }
                     }
                 }
@@ -368,6 +368,7 @@ const getUserProfile = asynchandler( async (req,res) =>{
                     fullName:1,
                     userName:1,
                     email:1,
+                    mobileNo :1,
                     collegeName:1,
                     companyName:1,
                     profileImg:1,
@@ -376,14 +377,15 @@ const getUserProfile = asynchandler( async (req,res) =>{
                     likedPosts :1,
                     followersCount:1,
                     followingToCount:1,
-                    createdAt:1
+                    createdAt:1,
+                    isFollowed: 1
                 }
             }
         ]
     )
 
     if(!profile?.length){
-        throw new apiError(400, "User not found");
+        throw new apiError(404, "User not found");
     }
 
     return res.status(200).json(
@@ -417,7 +419,8 @@ const getMyPosts = asynchandler(async (req,res ) => {
                                 pipeline:[
                                     {
                                         $project:{ //only show required fields of the owner
-                                            fullName :1 //send more if required
+                                            fullName :1,
+                                            title: 1 //send more if required
                                         }
                                     },
                                     {
@@ -439,5 +442,8 @@ const getMyPosts = asynchandler(async (req,res ) => {
     return res.status(200)
         .json(new apiResponse(200, user[0].myPosts , "Posts fetched successfully"));
 })
+
+
+
 
 export { registerUser, loginUser, logoutUser, renewAccessToken, updatePassword, getCurrentUser, updateFullname, updateProfileImage, getUserProfile, getMyPosts};

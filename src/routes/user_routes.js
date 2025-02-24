@@ -24,11 +24,11 @@ router.route("/login").post(loginUser);
 //login requireed routes
 router.route("/logout").post(verifyJWt, logoutUser);
 router.route("/renew_tokens").post(renewAccessToken);
-router.route("/update_password").post(verifyJWt, updatePassword);
+router.route("/update_password").patch(verifyJWt, updatePassword);
 router.route("/update_fullname").patch(verifyJWt, updateFullname);
 router.route("/update_profileimg").patch(verifyJWt, upload.single("profileImg") ,updateProfileImage); //add for cover image - to do
 router.route("/current-user").get(verifyJWt, getCurrentUser);
-router.route("/profile/:username").get(getUserProfile);
+router.route("/profile/:username").get(verifyJWt,getUserProfile);
 router.route("/posts").get(verifyJWt, getMyPosts);
 
 
