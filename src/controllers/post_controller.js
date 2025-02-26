@@ -98,16 +98,22 @@ const updatePost = asynchandler(async (req, res) => {
         throw new apiError(400, "Post doesn't exist");
     }
 
-    post.title = newtitle;
-    post.text = newtext;
+    if(post.owner.toString() !== req.user._id.toString()){
+        throw new apiError(403, "Not authorised to update post");
+    } 
 
-    await post.save({validateBeforeSave: false});
+    const updatedPost = await Post.findByIdAndUpdate(
+        postId,
+        {
+            ...(newtitle && { title: newtitle }), // Update only if provided
+            ...(newtext && { text: newtext }),
+        },
+        { new: true, runValidators: true } // `new: true` returns the updated document
+    );
 
-    return res
-        .status(200)
-        .json(
-            new apiResponse(200, {}, "Post updated successfully")
-        )
+    return res.status(200).json(
+        new apiResponse(200, updatedPost, "Post updated successfully")
+    );
 
 });
 
