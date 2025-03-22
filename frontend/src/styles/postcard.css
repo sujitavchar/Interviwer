@@ -1,0 +1,111 @@
+/* Container */
+.post-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px 15px;
+    max-width: 600px;
+    width: 100%;
+    margin: auto;
+    gap: 10px;
+  }
+  
+  /* Profile Picture */
+  .profile-pic {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  /* Input Section */
+  .input-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #f3f3f3;
+    border-radius: 20px;
+    padding: 8px 12px;
+  }
+  
+  /* Input Field */
+  .post-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    outline: none;
+    min-height: 30px;
+  }
+  
+  /* Icons Container */
+  .icon-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: 10px;
+  }
+  
+  /* Icons */
+  .icon {
+    font-size: 16px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .icon:hover {
+    color: #000;
+  }
+  
+  /* Post Button */
+  .post-button {
+    background: #0084ff;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .post-button:hover {
+    background: #0070e0;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .post-box {
+      flex-direction: row;
+      align-items: center;
+      padding: 8px;
+    }
+  
+    .profile-pic {
+      width: 32px;
+      height: 32px;
+    }
+  
+    .input-section {
+      flex: 1;
+      padding: 6px 10px;
+    }
+  
+    .post-button {
+      padding: 5px 12px;
+      font-size: 12px;
+      border-radius: 16px;
+    }
+  
+    .icon-container {
+      margin-left: 5px;
+    }
+  }
+  
