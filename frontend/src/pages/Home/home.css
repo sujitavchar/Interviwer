@@ -1,0 +1,58 @@
+.home-container {
+    display: flex;
+    height: 100vh;
+    background: #f9fafb;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 230px;  /* Slightly reduced */
+    background: white;
+    padding: 15px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Main Content (Feed & Events) */
+.main-content {
+    display: flex;
+    flex: 1;
+    margin-left: 230px; /* Adjusted for fixed sidebar */
+    padding: 15px 10px; /* Reduced padding */
+    gap: 15px; /* Reduced gap */
+}
+
+/* Feed Section */
+.feed {
+    flex: 2.2; /* Slightly increased */
+}
+
+/* Right Sidebar (Events) */
+.right-sidebar {
+    flex: 0.8;  /* Reduced width to create ad space */
+    max-width: 250px;
+}
+
+/* Rightmost Google Ads Space */
+.google-ads {
+    width: 200px; /* Fixed width */
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        flex-direction: column;
+        margin-left: 0;
+    }
+    .right-sidebar {
+        max-width: 100%;
+    }
+    .google-ads {
+        display: none; /* Hide ads on smaller screens */
+    }
+}

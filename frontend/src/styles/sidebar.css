@@ -60,7 +60,7 @@
   }
   
   /* Responsive styles */
-  @media (max-width: 768px) {
+  @media (max-width: 800px) {
     .sidebar {
       transform: translateX(-100%);
     }
