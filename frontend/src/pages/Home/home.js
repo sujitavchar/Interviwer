@@ -4,6 +4,7 @@ import Sidebar from '../../components/sidebar';
 import Postcard from '../../components/postcard';
 import Post from '../../components/post';
 import Latestevents from '../../components/latestevents';
+import Navbar from "../../components/navbar";
 
 import profileIcon from "../../assets/profile_image_icon.png";
 import temp from '../../assets/temp.png';
@@ -11,6 +12,7 @@ import temp from '../../assets/temp.png';
 const HomePage = () => {
   return (
     <div className="home-container">
+        <Navbar/>
         <Sidebar/>
         
         {/* Main Content */}

@@ -35,7 +35,6 @@ const userSchema = new Schema({
     },
     companyName : {
         type : String,
-        required : true,
         index : true,
         trim : true
     },
