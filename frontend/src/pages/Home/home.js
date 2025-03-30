@@ -21,7 +21,7 @@ const HomePage = () => {
                     user={{ name: "Robert Hammond", profilePic: profileIcon }}
                     time="20 min"
                     title= "Temporary title"
-                    text="My wife prepared a surprise trip for me. Here are some shots from Sri Lanka. ❤️"
+                    text="My wife prepared a surprise trip for me. Here are some shots from Sri Lanka. ❤️ lkdnlk aghh a ashgalsh kaslhag askdh ahg asl'fkh aslkfhg a l'kshfhg 'akslfhg 'aslkgh  'ksadhfhg asklgh a'slkg ha s'dfgh a'sfgh  as' hasd g'ashdg 'asdkhg 'adsgh 'adslgh asklg hsa'gk has asd a;osdh odshgoahsd poidshgd oaisdhg ;h as;dgh a;sdgi h as;dgh a;sdgih as;dlgih as;digh a;sdighdshhg;kdashg;ldshgadshg;ashdg"
                     image={temp}
                     likes={230}
                     comments={6}

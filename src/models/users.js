@@ -25,6 +25,17 @@ const userSchema = new Schema({
         required : [true, 'Password is required']
        
     },
+    dob: {
+        type: Date,
+        required: true,
+        validate: {
+            validator: function(v) {
+                return v instanceof Date && !isNaN(v);
+            },
+            message: "Invalid date format"
+        }
+    },
+    
     collegeName : {
         type : String,
         required : true,

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import '../styles/navbar.css';
+import React, { useState } from "react";
+import "../styles/navbar.css";
 import profileIcon from "../assets/profile_image_icon.png";
 
 const Navbar = () => {
@@ -18,7 +18,7 @@ const Navbar = () => {
 
       {/* Mobile menu button */}
       <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle navigation menu">
-        <div className={`hamburger ${menuOpen ? 'active' : ''}`}>
+        <div className={`hamburger ${menuOpen ? "active" : ""}`}>
           <span></span>
           <span></span>
           <span></span>
@@ -26,8 +26,8 @@ const Navbar = () => {
       </button>
 
       {/* Navigation container - wraps search and actions */}
-      <div className={`navbar-container ${menuOpen ? 'active' : ''}`}>
-        {/* Middle section - Search bar */}
+      <div className={`navbar-container ${menuOpen ? "active" : ""}`}>
+        {/* Search bar - Visible inside the menu on small screens */}
         <div className="navbar-search">
           <div className="search-container">
             <div className="search-icon">
@@ -36,11 +36,7 @@ const Navbar = () => {
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </div>
-            <input
-              type="text"
-              placeholder="Type in search"
-              className="search-input"
-            />
+            <input type="text" placeholder="Search" className="search-input" />
           </div>
         </div>
 
@@ -57,11 +53,7 @@ const Navbar = () => {
           <div className="user-profile">
             <span className="username">Ben Goro</span>
             <a href="/profile" className="avatar-link">
-              <img
-                src={profileIcon}
-                alt="User avatar"
-                className="avatar-image"
-              />
+              <img src={profileIcon} alt="User avatar" className="avatar-image" />
             </a>
           </div>
         </div>
