@@ -25,12 +25,7 @@ const userSchema = new Schema({
         required : [true, 'Password is required']
        
     },
-    dob: {
-        type: String,
-        required: true,
-        trim: true
-        
-    },
+    
        
     collegeName : {
         type : String,
