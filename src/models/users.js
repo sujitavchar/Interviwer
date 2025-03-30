@@ -28,12 +28,7 @@ const userSchema = new Schema({
     dob: {
         type: Date,
         required: true,
-        validate: {
-            validator: function(v) {
-                return v instanceof Date && !isNaN(v);
-            },
-            message: "Invalid date format"
-        }
+        set: v => v ? new Date(v) : v  // Converts string to Date object
     },
        
     collegeName : {
