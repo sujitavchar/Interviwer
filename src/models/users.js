@@ -28,6 +28,7 @@ const userSchema = new Schema({
     dob: {
         type: String,
         required: true,
+        trim: true
         
     },
        
