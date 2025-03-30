@@ -25,17 +25,25 @@ const userSchema = new Schema({
         required : [true, 'Password is required']
        
     },
-    // dob: {
-    //     type: Date,
-    //     required: true,
-    //     validate: {
-    //         validator: function(v) {
-    //             return v instanceof Date && !isNaN(v);
-    //         },
-    //         message: "Invalid date format"
-    //     }
-    // },
-    
+    dob: {
+        type: Date,
+        required: true,
+        set: function(v) {
+            if (typeof v === "string") {
+                const parts = v.split("-");
+                if (parts.length === 3) {
+                    return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`); // Convert to YYYY-MM-DD
+                }
+            }
+            return v;
+        },
+        validate: {
+            validator: function(v) {
+                return v instanceof Date && !isNaN(v);
+            },
+            message: "Invalid date format"
+        }
+    },    
     collegeName : {
         type : String,
         required : true,
