@@ -26,9 +26,9 @@ const userSchema = new Schema({
        
     },
     dob: {
-        type: Date,
+        type: String,
         required: true,
-        set: v => v ? new Date(v) : v  // Converts string to Date object
+        
     },
        
     collegeName : {
