@@ -139,42 +139,45 @@ const registerUser = asynchandler( async (req,res)=>{
 })
 
 
+const loginUser = asynchandler(async (req, res) => {
+    const { fullName, email, password } = req.body;
 
-const loginUser = asynchandler( async (req,res)=>{
-    const {fullName,email,password} = req.body;
-
-    if(!email && !fullName){
+    if (!email && !fullName) {
         throw new apiError(400, "Email and Fullname are required");
     }
 
-    let user = await User.findOne({email});
-    if(!user){
-        throw new apiError(404,"User doesn't exists");
+    let user = await User.findOne({ email });
+    if (!user) {
+        throw new apiError(404, "User doesn't exist");
     }
 
     const isPasswordValid = await user.isPasswordCorrect(password);
-    
-    if(!isPasswordValid){
-        throw new apiError(401,"Incorrect password");
+    if (!isPasswordValid) {
+        throw new apiError(401, "Incorrect password");
     }
-    
-    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
-    
-    user = await User.findById(user._id).select("-password -refreshToken"); //updates user object with newly generated refreshtoken
 
-    const options = {
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
+    user = await User.findById(user._id).select("-password -refreshToken");
+
+    const cookieOptions = {
         httpOnly: true,
-        secure: true
-    }
+        secure: true,
+        sameSite: "None", // 👈 critical for cross-origin cookies
+    };
 
-    return res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken", refreshToken,options)
-            .json(
-                new apiResponse(200, {
-                    user: user, accessToken, refreshToken
-                },
-                "User logged in successfully")
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
+        .json(
+            new apiResponse(
+                200,
+                { user, accessToken, refreshToken },
+                "User logged in successfully"
             )
-})
+        );
+});
+
 
 const logoutUser = asynchandler(async (req, res) => {
     

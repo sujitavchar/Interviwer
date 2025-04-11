@@ -3,13 +3,17 @@ import { FaThumbsUp, FaComment, FaShare, FaTrash } from "react-icons/fa";
 import "../styles/post.css";
 
 const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
+  const {
+    name = "Unknown User",
+    profilePic = "https://i.pravatar.cc/40",
+  } = user || {};
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [isCommentBoxOpen, setIsCommentBoxOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
 
-  // Sample comments (replace with DB fetched comments)
   const [commentList, setCommentList] = useState([
     {
       id: 1,
@@ -51,11 +55,11 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
         profilePic: "https://i.pravatar.cc/40?img=3",
         text: commentText,
         time: "Just now",
-        isOwner: true, // Marks the comment as owned by the user
+        isOwner: true,
       };
 
-      setCommentList([newComment, ...commentList]); // Add new comment at the top
-      setCommentText(""); // Clear input field
+      setCommentList([newComment, ...commentList]);
+      setCommentText("");
     }
   };
 
@@ -67,9 +71,9 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
     <div className={`post-container ${isExpanded ? "expanded" : ""}`}>
       {/* Header Section */}
       <div className="post-header">
-        <img src={user.profilePic} alt="User" className="profile-pic" />
+        <img src={profilePic} alt="User" className="profile-pic" />
         <div className="post-info">
-          <p className="user-name">{user.name}</p>
+          <p className="user-name">{name}</p>
           <p className="post-time">{time} ago</p>
         </div>
       </div>
@@ -99,7 +103,10 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
 
       {/* Actions */}
       <div className="post-actions">
-        <button className={`action-btn ${isLiked ? "liked" : ""}`} onClick={handleLikeToggle}>
+        <button
+          className={`action-btn ${isLiked ? "liked" : ""}`}
+          onClick={handleLikeToggle}
+        >
           <FaThumbsUp size={18} color={isLiked ? "blue" : "black"} />
           {isLiked ? "Liked" : "Like"} <span>{likeCount}</span>
         </button>
@@ -131,16 +138,23 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
           <div className="comment-list">
             {commentList.map((comment) => (
               <div key={comment.id} className="comment-item">
-                <img src={comment.profilePic} alt="User" className="comment-profile-pic" />
+                <img
+                  src={comment.profilePic}
+                  alt="User"
+                  className="comment-profile-pic"
+                />
                 <div className="comment-content">
                   <p className="comment-user">
-                    {comment.name} <span className="comment-time">· {comment.time}</span>
+                    {comment.name}{" "}
+                    <span className="comment-time">· {comment.time}</span>
                   </p>
                   <p className="comment-text">{comment.text}</p>
                 </div>
-                {/* Show delete button only if user owns the comment */}
                 {comment.isOwner && (
-                  <button className="delete-btn" onClick={() => handleDeleteComment(comment.id)}>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteComment(comment.id)}
+                  >
                     <FaTrash size={14} color="red" />
                   </button>
                 )}

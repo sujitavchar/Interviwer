@@ -4,7 +4,7 @@ import Home from "./pages/Home/home";
 import LandingPage from "./pages/LandingPage/landingpage";
 import Register from "./pages/Register/register";
 import Login from "./pages/Login/login";
-import { UserProvider } from "../src/context/usercintext";  
+import { UserProvider } from "./context/usercontext";  
 import "./styles/index.css";
 
 const App = () => {
