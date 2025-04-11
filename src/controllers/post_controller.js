@@ -10,7 +10,7 @@ const getALLPosts = asynchandler(async (req, res) => {
     try {
         const posts = await Post.find()
             .sort({ createdAt: -1 })
-            .populate("owner", "fullName"); // only fetch 'name' field of the user
+            .populate("owner", "fullName profileImg"); // only fetch 'name' field of the user
 
         return res.status(200).json(
             new apiResponse(200, posts, "All posts fetched successfully")
