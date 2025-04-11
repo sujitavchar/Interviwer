@@ -163,6 +163,7 @@ const loginUser = asynchandler(async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "Lax", 
+        domain: ".railway.app"
     };
 
     return res
