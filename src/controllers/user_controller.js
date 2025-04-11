@@ -178,7 +178,6 @@ const loginUser = asynchandler(async (req, res) => {
         );
 });
 
-
 const logoutUser = asynchandler(async (req, res) => {
     
 
