@@ -13,7 +13,6 @@ body {
     border-bottom: 1px solid #e5e7eb;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     position: relative;
-    height: 27px;
     position: fixed;  /* Stick the navbar */
     top: 0;  /* Place it at the top */
     left: 0;

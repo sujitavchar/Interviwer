@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../styles/navbar.css";
 import profileIcon from "../assets/profile_image_icon.png";
 
-const Navbar = () => {
+const Navbar = ({ username = "User", profileImage }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -27,7 +27,7 @@ const Navbar = () => {
 
       {/* Navigation container - wraps search and actions */}
       <div className={`navbar-container ${menuOpen ? "active" : ""}`}>
-        {/* Search bar - Visible inside the menu on small screens */}
+        {/* Search bar */}
         <div className="navbar-search">
           <div className="search-container">
             <div className="search-icon">
@@ -51,9 +51,9 @@ const Navbar = () => {
             <span className="notification-count">0</span>
           </button>
           <div className="user-profile">
-            <span className="username">Ben Goro</span>
+            <span className="username">{username}</span>
             <a href="/profile" className="avatar-link">
-              <img src={profileIcon} alt="User avatar" className="avatar-image" />
+              <img src={profileImage || profileIcon} alt="User avatar" className="avatar-image" />
             </a>
           </div>
         </div>

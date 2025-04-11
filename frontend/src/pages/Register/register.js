@@ -125,6 +125,12 @@ const Register = () => {
           </p>
 
           <button type="submit" className="btn signup">{isSubmitting ? "Registering..." : "Sign Up"}</button>
+
+          <p className="login-redirect">
+            Already registered? <a href="/login">Login</a>
+          </p>
+
+
         </form>
       </div>
 

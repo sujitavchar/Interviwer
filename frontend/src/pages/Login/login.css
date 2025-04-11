@@ -1,0 +1,121 @@
+body.login-page {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #f0f0d7, #d0ddd0);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  
+  .login-page .login-container {
+    background: #ffffff;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    max-width: 420px;
+    width: 90%;
+    border: 1px solid #d0ddd0;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+  
+  .login-page .login-title {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #727d73;
+    margin-bottom: 1.8rem;
+  }
+  
+  .login-page .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .login-page .login-label {
+    font-weight: 600;
+    color: #727d73;
+    margin-bottom: 0.4rem;
+  }
+  
+  .login-page .login-input {
+    padding: 0.8rem 1rem;
+    border-radius: 0.6rem;
+    border: 1px solid #aab99a;
+    font-size: 1rem;
+    outline: none;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .login-page .login-input:focus {
+    border-color: #727d73;
+    background-color: #ffffff;
+  }
+  
+  .login-page .login-button {
+    background-color: #727d73;
+    color: white;
+    padding: 0.8rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .login-page .login-button:hover {
+    background-color: #5c675e;
+    transform: translateY(-1px);
+  }
+  
+  .login-page .login-message {
+    margin-top: 1.2rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #444;
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .login-page .login-container {
+      padding: 2rem 1.5rem;
+      max-width: 90%;
+    }
+  
+    .login-page .login-title {
+      font-size: 1.8rem;
+    }
+  
+    .login-page .login-input,
+    .login-page .login-button {
+      font-size: 0.95rem;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .login-page body {
+      padding: 1rem;
+    }
+  
+    .login-page .login-container {
+      padding: 1.5rem 1.2rem;
+      border-radius: 1rem;
+    }
+  
+    .login-page .login-title {
+      font-size: 1.6rem;
+    }
+  
+    .login-page .login-input,
+    .login-page .login-button {
+      font-size: 0.9rem;
+      padding: 0.7rem 0.9rem;
+    }
+  }
+  
