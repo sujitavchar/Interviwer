@@ -6,17 +6,20 @@ import {apiResponse} from "../utils/apiResponse.js";
 
 
 
-const getALLPosts = asynchandler(async (req,res) => {
+const getALLPosts = asynchandler(async (req, res) => {
     try {
-        const posts= await Post.find().sort({ createdAt: -1 }); //get all posts in desc order of post creation
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .populate("owner", "fullName"); // only fetch 'name' field of the user
 
         return res.status(200).json(
-            new apiResponse(200,posts ,"All posts fetched  successfully")
+            new apiResponse(200, posts, "All posts fetched successfully")
         );
     } catch (error) {
         throw new apiError(500, "Error fetching feed");
     }
-})
+});
+
 
 const createPost  = asynchandler(async (req,res)=>{
     const {title, text } = req.body;
