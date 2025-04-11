@@ -162,7 +162,7 @@ const loginUser = asynchandler(async (req, res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "None", // 👈 critical for cross-origin cookies
+        sameSite: "none", 
     };
 
     return res
