@@ -23,12 +23,11 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(
-            "https://interviwer-production.up.railway.app/api/v1/content/feed",
-            {
-              withCredentials: true,
-            }
-          );
+        const response = await axios.get("https://interviwer-production.up.railway.app/api/v1/content/feed", {
+            withCredentials: true
+          });
+          
+          
           
         console.log(response)
         if (response.status === 200) {
