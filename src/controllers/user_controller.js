@@ -161,9 +161,9 @@ const loginUser = asynchandler(async (req, res) => {
 
     const cookieOptions = {
         httpOnly: true,
-        secure: true,
-        sameSite: "Lax", 
-        domain: ".railway.app"
+        secure: true,         // make sure you're on HTTPS
+        sameSite: "none",     // allow cross-site requests
+        maxAge: 24 * 60 * 60 * 1000, 
     };
 
     return res

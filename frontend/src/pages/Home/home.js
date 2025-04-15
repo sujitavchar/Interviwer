@@ -24,9 +24,7 @@ const HomePage = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get("https://interviwer-production.up.railway.app/api/v1/content/feed", {
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2JhZWRjYTMwN2IwYTgwYjY5MDdmNDIiLCJlbWFpbCI6InJAZ21haWwuY29tIiwiZnVsbE5hbWUiOiJNLnJvYm90IiwiaWF0IjoxNzQ0NzA5NDE0LCJleHAiOjE3NDQ3OTU4MTR9.CjW7_gt_q8eT7fvGb4sVlVAf0cSeIqZWStoz9PkgdQs`
-          }
+          withCredentials: true
         });
         
           
