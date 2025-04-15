@@ -121,6 +121,57 @@
   .action-btn:hover {
     color: #007bff;
   }
+
+
+  /* Add this to your post.css file */
+
+.options-menu {
+  position: relative;
+  margin-left: auto;
+}
+
+.options-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.options-dropdown {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 120px;
+  z-index: 10;
+}
+
+.option-item {
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.option-item:hover {
+  background-color: #f0f0f0;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+
+
+
   
   /* Mobile Responsive */
   @media (max-width: 500px) {

@@ -42,7 +42,7 @@ const createPost  = asynchandler(async (req,res)=>{
             throw new apiError(500, "Failed to upload  image");
         }
     }
-
+    console.log(req.user._id);
     try {
         const newPost = await Post.create({
             title: title,

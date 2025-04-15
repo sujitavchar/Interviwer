@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { FaThumbsUp, FaComment, FaShare, FaTrash } from "react-icons/fa";
+import { FaThumbsUp, FaComment, FaShare, FaTrash, FaEllipsisH } from "react-icons/fa";
 import "../styles/post.css";
 
-const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
+const Post = ({ user, time, title, text, image, likes, comments, shares, onEdit, onDelete }) => {
   const {
     name = "Unknown User",
     profilePic = "https://i.pravatar.cc/40",
@@ -13,7 +13,6 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
   const [likeCount, setLikeCount] = useState(likes);
   const [isCommentBoxOpen, setIsCommentBoxOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
-
   const [commentList, setCommentList] = useState([
     {
       id: 1,
@@ -32,6 +31,7 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
       isOwner: false,
     },
   ]);
+  const [showOptions, setShowOptions] = useState(false); // State for the three-dot menu
 
   const words = text.split(" ");
   const wordLimit = 50;
@@ -67,6 +67,10 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
     setCommentList(commentList.filter((comment) => comment.id !== id));
   };
 
+  const toggleOptionsMenu = () => {
+    setShowOptions(!showOptions);
+  };
+
   return (
     <div className={`post-container ${isExpanded ? "expanded" : ""}`}>
       {/* Header Section */}
@@ -75,6 +79,20 @@ const Post = ({ user, time, title, text, image, likes, comments, shares }) => {
         <div className="post-info">
           <p className="user-name">{name}</p>
           <p className="post-time">{time} ago</p>
+        </div>
+
+        {/* Three Dot Menu */}
+        <div className="options-menu">
+          <button className="options-btn" onClick={toggleOptionsMenu}>
+            <FaEllipsisH size={20} />
+          </button>
+
+          {showOptions && (
+            <div className="options-dropdown">
+              <button className="option-item" onClick={onEdit}>Edit</button>
+              <button className="option-item" onClick={onDelete}>Delete</button>
+            </div>
+          )}
         </div>
       </div>
 

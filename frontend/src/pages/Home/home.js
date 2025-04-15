@@ -7,7 +7,6 @@ import Latestevents from "../../components/latestevents";
 import Navbar from "../../components/navbar";
 
 import profileIcon from "../../assets/profile_image_icon.png";
-import temp from "../../assets/temp.png";
 
 import { useUser } from "../../context/usercontext";
 import axios from "axios";
@@ -63,7 +62,7 @@ const HomePage = () => {
               time={new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               title={item.title}
               text={item.text}
-              image={item.image || temp}
+              image={item.image || ""}
               likes={Math.floor(Math.random() * 300)} // mocked for demo
               comments={Math.floor(Math.random() * 10)}
               shares={Math.floor(Math.random() * 5)}
