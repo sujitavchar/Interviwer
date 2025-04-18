@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/navbar.css";
 import profileIcon from "../assets/profile_image_icon.png";
+import logo from "../assets/logo.png"
 
 const Navbar = ({ username = "User", profileImage }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,7 +14,7 @@ const Navbar = ({ username = "User", profileImage }) => {
     <nav className="navbar">
       {/* Left section - Brand name */}
       <div className="navbar-brand">
-        <a href="/" className="brand-link">Connected</a>
+        <a href="/home" className="brand-link"><img src={logo} alt="logo" className="navbar-logo" /></a>
       </div>
 
       {/* Mobile menu button */}

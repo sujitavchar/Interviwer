@@ -22,7 +22,7 @@ const Sidebar = () => {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
-      setIsOpen(window.innerWidth >= 768); // Sidebar always open on large screens
+      setIsOpen(window.innerWidth >= 768); 
     };
 
     const handleClickOutside = (event) => {
@@ -50,7 +50,7 @@ const Sidebar = () => {
       <div ref={sidebarRef} className={`sidebar ${isOpen ? "open" : "collapsed"}`}>
         <ul className="menu">
           <li>
-            <Link to="/">
+            <Link to="/home">
               <FaHome className="icon" /> <span>Home</span>
             </Link>
           </li>
@@ -71,7 +71,7 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/feed">
+            <Link to="/home">
               <FaNewspaper className="icon" /> <span>Feed</span>
             </Link>
           </li>
