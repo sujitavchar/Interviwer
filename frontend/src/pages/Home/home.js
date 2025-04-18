@@ -53,20 +53,30 @@ const HomePage = () => {
 
           {/* Dynamically Render Fetched Posts */}
           {posts.map((item) => (
-            <Post
+              <Post
               key={item._id}
+              postId={item._id}
               user={{
                 name: item.owner.fullName,
-                profilePic: item.owner.profileImg  || profileIcon, // default for now
+                profilePic: item.owner.profileImg || profileIcon,
+                _id: item.owner._id, // important!
               }}
-              time={new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              currentUserId={user?._id}
+              time={new Date(item.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
               title={item.title}
               text={item.text}
               image={item.image || ""}
-              likes={Math.floor(Math.random() * 300)} // mocked for demo
+              likes={Math.floor(Math.random() * 300)}
               comments={Math.floor(Math.random() * 10)}
               shares={Math.floor(Math.random() * 5)}
+              onDelete={(deletedPostId) =>
+                setPosts((prev) => prev.filter((p) => p._id !== deletedPostId))
+              }
             />
+
           ))}
         </div>
 

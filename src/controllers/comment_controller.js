@@ -45,7 +45,8 @@ const getAllCommentsByPostId  = asynchandler(async (req, res)=>{
                         text: 1,
                         createdAt: 1,
                         postTitle: "$postDetails.title",
-                        userName: "$userDetails.fullName"
+                        userName: "$userDetails.fullName",
+                        user_profile_image: "$userDetails.profileImg"
                     }
                 }
             ])

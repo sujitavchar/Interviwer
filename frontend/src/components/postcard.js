@@ -3,7 +3,10 @@ import "../styles/postcard.css";
 import profileIcon from "../assets/profile_image_icon.png";
 import CreatePost from "../components/createpost";
 
+
+
 const PostInputBox = () => {
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -28,7 +31,7 @@ const PostInputBox = () => {
       </div>
 
       {/* CreatePost Modal */}
-      {isModalOpen && <CreatePost isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <CreatePost isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}  />}
     </>
   );
 };

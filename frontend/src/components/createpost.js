@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "../styles/createpost.css"; 
-import profileIcon from "../assets/profile_image_icon.png";
+import "../styles/createpost.css";
+//import profileIcon from "../assets/profile_image_icon.png";
+import axios from "axios";
+
 
 const CreatePost = ({ isOpen, onClose }) => {
-  const [postText, setPostText] = useState(""); // Track input
+  
+  const [title, setTitle] = useState("");
+  const [postText, setPostText] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -16,36 +22,102 @@ const CreatePost = ({ isOpen, onClose }) => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size must be below 5MB.");
+      return;
+    }
+
+    setImageFile(file);
+  };
+
+  const handleSubmit = async () => {
+    if (!title.trim() || !postText.trim()) return;
+  
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("text", postText);
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+  
+    try {
+      setLoading(true);
+      await axios.post(
+        "https://interviwer-production.up.railway.app/api/v1/content/createpost",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true, // if you're using cookies for auth
+        }
+      );
+      //console.log("Post created:", response.data);
+      alert("Post created successfully 🎉")
+      onClose();
+      window.location.reload(); // reloads the page after modal closes
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert("Failed to create post");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Header Section */}
+        {/* Header */}
         <div className="post-header">
-          <img src={profileIcon} alt="User Avatar" className="avatar" />
-          <span className="username">Sujit Avchar</span>
+          <span className="username">Create a Post</span>
         </div>
 
-        {/* Input Area */}
+        {/* Title Field */}
+        <input
+          className="post-title"
+          placeholder="Enter post title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        {/* Textarea */}
         <textarea
           className="post-input"
           placeholder="What do you want to talk about?"
           autoFocus
           value={postText}
-          onChange={(e) => setPostText(e.target.value)} // Update state
+          onChange={(e) => setPostText(e.target.value)}
         />
 
-        {/* Footer Section */}
+        {/* Footer */}
         <div className="post-footer">
           <button className="rewrite-ai-btn">✨ Rewrite with AI</button>
-          <button className="add-media-btn">📷 Add Media</button>
-          <button 
-            className="post-btn" 
-            disabled={!postText.trim()} // Button is only disabled when input is empty
+
+          <button className="add-media-btn" onClick={() => document.getElementById("imageInput").click()}>
+            📷 Add Media
+          </button>
+          <input
+            type="file"
+            id="imageInput"
+            style={{ display: "none" }}
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+
+          <button
+            className="post-btn"
+            onClick={handleSubmit}
+            disabled={loading || !title.trim() || !postText.trim()}
           >
-            Post
-          </button> 
+            {loading ? "Posting..." : "Post"}
+          </button>
         </div>
       </div>
     </div>

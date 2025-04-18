@@ -104,5 +104,13 @@
     cursor: pointer;
     opacity: 1;
 }
+.post-title {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
 
   
