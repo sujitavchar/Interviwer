@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@google/genai": "^0.9.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -12,6 +13,8 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.0",
     "react-scripts": "5.0.1",
+    "react-slick": "^0.30.3",
+    "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -38,5 +41,5 @@
       "last 1 safari version"
     ]
   },
-    "proxy": "https://interviwer-production.up.railway.app"
+  "proxy": "https://interviwer-production.up.railway.app"
 }

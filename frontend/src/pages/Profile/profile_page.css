@@ -1,3 +1,5 @@
+
+
 .profile-page-container {
     font-family: 'Segoe UI', sans-serif;
     background-color: #fafafa;
@@ -119,14 +121,36 @@
   .user-details-section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    padding: 10px 0;
+    border-top: 1px solid #e0e0e0;
   }
   
   .detail-item {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 15px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   }
+  
+  .detail-label {
+    font-weight: 500;
+    color: #444;
+    flex: 1;
+  }
+  
+  .detail-value {
+    text-align: right;
+    flex: 1;
+    color: #666;
+    font-weight: 400;
+    word-break: break-word;
+  }
+  
   
   .profile-main-content {
     flex: 2;
@@ -137,9 +161,61 @@
   .post-creation-box {
     margin-bottom: 20px;
   }
+
+
+  .logout-button-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+  }
   
+  .logout-button {
+    background-color: #f44336;
+    color: #fff;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+  }
+  
+  .logout-button:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+  }
+  
+  .fullpage-loader {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f0f2f5;
+    z-index: 999;
+  }
+  
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #ccc;
+    border-top: 6px solid #4c63af;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
   /* Responsive */
   @media screen and (max-width: 768px) {
+
+    
     .profile-info-container {
       flex-direction: column;
       align-items: center;
@@ -160,5 +236,27 @@
       max-width: 100%;
       width: 100%;
     }
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+    
+      .detail-label,
+      .detail-value {
+        text-align: left;
+        flex: unset;
+        width: 100%;
+    }
+
+    .logout-button-wrapper {
+        right: 10px;
+        bottom: 10px;
+      }
+    
+      .logout-button {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
   }
   

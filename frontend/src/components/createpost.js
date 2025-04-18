@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "../styles/createpost.css";
-//import profileIcon from "../assets/profile_image_icon.png";
 import axios from "axios";
 
+// Initialize GoogleGenAI with your API key
+//const ai = new GoogleGenAI({ apiKey: "AIzaSyBShrnrISxlfemGMkYQ4BZ0K9-mCj_ZMpY" });
 
 const CreatePost = ({ isOpen, onClose }) => {
-  
   const [title, setTitle] = useState("");
   const [postText, setPostText] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false); 
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -36,14 +37,14 @@ const CreatePost = ({ isOpen, onClose }) => {
 
   const handleSubmit = async () => {
     if (!title.trim() || !postText.trim()) return;
-  
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("text", postText);
     if (imageFile) {
       formData.append("image", imageFile);
     }
-  
+
     try {
       setLoading(true);
       await axios.post(
@@ -56,8 +57,7 @@ const CreatePost = ({ isOpen, onClose }) => {
           withCredentials: true, // if you're using cookies for auth
         }
       );
-      //console.log("Post created:", response.data);
-      alert("Post created successfully 🎉")
+      alert("Post created successfully 🎉");
       onClose();
       window.location.reload(); // reloads the page after modal closes
     } catch (error) {
@@ -67,6 +67,26 @@ const CreatePost = ({ isOpen, onClose }) => {
       setLoading(false);
     }
   };
+
+  const handleRewriteAI = async () => {
+    setAiLoading(true);
+  
+    try {
+      const enhancedText = postText + " Enhance the text before this line. Correct grammar and punctuation. Don't provide any extra information.";
+  
+      const response = await axios.post("/api/enhance-text", {
+        postText: enhancedText,
+      });
+  
+      setPostText(response.data.enhancedText || postText);
+    } catch (error) {
+      console.error("Error with AI rewrite:", error);
+      alert("Failed to rewrite with AI");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  
   
 
   if (!isOpen) return null;
@@ -98,9 +118,18 @@ const CreatePost = ({ isOpen, onClose }) => {
 
         {/* Footer */}
         <div className="post-footer">
-          <button className="rewrite-ai-btn">✨ Rewrite with AI</button>
+          <button
+            className="rewrite-ai-btn"
+            onClick={handleRewriteAI}
+            disabled={aiLoading} // Disable if AI is in progress
+          >
+            {aiLoading ? "Rewriting..." : "✨ Rewrite with AI"}
+          </button>
 
-          <button className="add-media-btn" onClick={() => document.getElementById("imageInput").click()}>
+          <button
+            className="add-media-btn"
+            onClick={() => document.getElementById("imageInput").click()}
+          >
             📷 Add Media
           </button>
           <input

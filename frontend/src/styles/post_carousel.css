@@ -1,0 +1,106 @@
+.user-posts-carousel {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .carousel-slide {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .carousel-post-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease;
+    max-width: 720px;
+    text-align: center;
+  }
+  
+  .carousel-post-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .carousel-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.4rem;
+  }
+  
+  .carousel-divider {
+    width: 60px;
+    border: 2px solid #6b9080;
+    margin: 0 auto 1rem;
+  }
+  
+  .carousel-text {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 16px;
+  }
+  
+  .carousel-image {
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-top: 12px;
+  }
+  
+  /* Custom Arrows */
+  .slick-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 8px 12px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .slick-arrow:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .left-arrow {
+    left: -30px;
+  }
+  
+  .right-arrow {
+    right: -30px;
+  }
+  
+  /* Dots customization */
+  .slick-dots li button:before {
+    color: #6b9080;
+  }
+  
+  @media (max-width: 768px) {
+    .carousel-post-card {
+      padding: 16px;
+      border-radius: 12px;
+    }
+  
+    .carousel-title {
+      font-size: 1.4rem;
+    }
+  
+    .carousel-image {
+      max-height: 280px;
+    }
+  
+    .left-arrow,
+    .right-arrow {
+      display: none;
+    }
+  }
+  

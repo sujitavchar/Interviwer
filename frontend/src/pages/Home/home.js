@@ -29,7 +29,6 @@ const HomePage = () => {
           
           
           
-        console.log(response)
         if (response.status === 200) {
           setPosts(response.data.data);
         }

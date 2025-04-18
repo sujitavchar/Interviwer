@@ -1,78 +1,128 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/navbar";
 import PostCard from "../../components/postcard";
-// import Posts from "../../components/Posts"; // Uncomment when ready
 import { FaEdit } from "react-icons/fa";
 import "./profile_page.css";
 import profileIcon from "../../assets/profile_image_icon.png";
 import Banner from "../../assets/banner.jpg";
 import { useUser } from "../../context/usercontext";
+import axios from "axios";
+import UserPostsCarousel from "../../components/post_carousel";
+
+const FullPageLoader = () => (
+  <div className="fullpage-loader">
+    <div className="spinner"></div>
+  </div>
+);
 
 const ProfilePage = () => {
   const { user } = useUser();
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [userPosts, setUserPosts] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      setLoading(false);
-    } else {
-      const timer = setTimeout(() => {
+    const fetchUserProfile = async () => {
+      if (!user?.id) return;
+
+      try {
+        const res = await axios.get(
+          `https://interviwer-production.up.railway.app/api/v1/users/profile/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+
+        const profileData = res.data?.data;
+        if (profileData) {
+          setUserData(profileData);
+          setFollowersCount(profileData.followersCount || 0);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+      } finally {
         setLoading(false);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
+      }
+    };
+
+    const fetchUserPosts = async () => {
+      try {
+        const res = await axios.get(
+          "https://interviwer-production.up.railway.app/api/v1/users/posts",
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+        setUserPosts(res.data?.data || []);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchUserProfile();
+    fetchUserPosts();
   }, [user]);
 
-  const ContentLoader = ({ height, width = "100%" }) => (
-    <div className="content-loader" style={{ height, width }}></div>
-  );
+  if (loading) return <FullPageLoader />;
 
-  const userData = {
-    fullName: user?.name || "No Name",
-    profileImg: user?.profileImg || profileIcon,
-    banner: user?.banner || Banner,
-    collegeName: user?.collegeName,
-    companyName: user?.companyName,
-    email: user?.email,
-    mobileNo: user?.mobileNo,
-    friends: user?.friends || 0,
-    myPosts: user?.myPosts || [],
+  const profile = {
+    fullName: userData?.fullName || "No Name",
+    userName: userData?.userName || "unknown",
+    profileImg: userData?.profileImg || profileIcon,
+    banner: Banner,
+    collegeName: userData?.collegeName,
+    companyName: userData?.companyName,
+    email: userData?.email,
+    mobileNo: userData?.mobileNo,
+    friends: followersCount,
+  };
+
+  const handleFollow = () => {
+    if (isFollowing) {
+      setIsFollowing(false);
+      setFollowersCount(followersCount - 1);
+    } else {
+      setIsFollowing(true);
+      setFollowersCount(followersCount + 1);
+    }
   };
 
   return (
     <div className="profile-page-container">
-      <Navbar />
+      <Navbar username={profile.fullName} profileImage={profile.profileImg} />
 
-      <div className="profile-banner" style={{ backgroundImage: `url(${userData.banner})` }}>
-        {loading && <div className="banner-loader"></div>}
-      </div>
+      <div
+        className="profile-banner"
+        style={{ backgroundImage: `url(${profile.banner})` }}
+      />
 
       <div className="profile-info-wrapper">
         <div className="profile-info-container">
           <div className="profile-photo-container">
-            {loading ? (
-              <div className="profile-photo-loader"></div>
-            ) : (
-              <img src={userData.profileImg} alt="Profile" className="profile-photo" />
-            )}
+            <img
+              src={profile.profileImg}
+              alt="Profile"
+              className="profile-photo"
+            />
           </div>
 
           <div className="profile-user-info">
-            {loading ? (
-              <>
-                <ContentLoader height="30px" width="150px" />
-                <ContentLoader height="20px" width="100px" />
-              </>
-            ) : (
-              <>
-                <h1 className="profile-username">{userData.fullName}</h1>
-                <p className="profile-friends">{userData.friends} friends</p>
-              </>
-            )}
+            <h1 className="profile-username">{profile.fullName}</h1>
+            <p className="profile-friends">{profile.friends} followers</p>
           </div>
 
           <div className="profile-actions">
-            <button className="follow-button">Follow 👥</button>
+            <button className="follow-button" onClick={handleFollow}>
+              {isFollowing ? "Unfollow" : "Follow"} 👥
+            </button>
             <button className="message-button">Message 💬</button>
           </div>
         </div>
@@ -90,38 +140,17 @@ const ProfilePage = () => {
           </div>
 
           <div className="user-details-section">
-            {loading ? (
-              <>
-                <ContentLoader height="20px" />
-                <ContentLoader height="20px" />
-              </>
-            ) : (
-              <>
-                {userData.collegeName && (
-                  <div className="detail-item">
-                    <span className="detail-label">College:</span>
-                    <span className="detail-value">{userData.collegeName}</span>
-                  </div>
-                )}
-                {userData.companyName && (
-                  <div className="detail-item">
-                    <span className="detail-label">Works at:</span>
-                    <span className="detail-value">{userData.companyName}</span>
-                  </div>
-                )}
-                {userData.email && (
-                  <div className="detail-item">
-                    <span className="detail-label">Email:</span>
-                    <span className="detail-value">{userData.email}</span>
-                  </div>
-                )}
-                {userData.mobileNo && (
-                  <div className="detail-item">
-                    <span className="detail-label">Phone:</span>
-                    <span className="detail-value">{userData.mobileNo}</span>
-                  </div>
-                )}
-              </>
+            {profile.collegeName && (
+              <div className="detail-item">
+                <span className="detail-label">🎓 Graduated From :</span>
+                <span className="detail-value">{profile.collegeName}</span>
+              </div>
+            )}
+            {profile.companyName && (
+              <div className="detail-item">
+                <span className="detail-label">🏢 Works at:</span>
+                <span className="detail-value">{profile.companyName}</span>
+              </div>
             )}
           </div>
         </div>
@@ -132,13 +161,10 @@ const ProfilePage = () => {
           </div>
 
           <div className="posts-container">
-            {loading ? (
-              <div className="posts-loader-container">
-                <ContentLoader height="100px" />
-                <ContentLoader height="150px" />
-              </div>
-            ) : userData.myPosts.length > 0 ? (
-              <div>{/* <Posts posts={userData.myPosts} /> */}</div>
+            {userPosts.length > 0 ? (
+              <> <h3 className="carousel-section-heading"> Recent Posts</h3>
+              <UserPostsCarousel posts={userPosts} /> </>
+              
             ) : (
               <div className="posts-empty-state">
                 <p className="posts-message">No posts to display yet.</p>
@@ -146,6 +172,31 @@ const ProfilePage = () => {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="logout-button-wrapper">
+        <button
+          className="logout-button"
+          onClick={async () => {
+            try {
+              await axios.post(
+                "https://interviwer-production.up.railway.app/api/v1/users/logout",
+                {},
+                {
+                  headers: {
+                    Authorization: `Bearer ${user.token}`,
+                  },
+                }
+              );
+              localStorage.clear();
+              window.location.href = "/login";
+            } catch (err) {
+              console.error("Logout failed:", err);
+            }
+          }}
+        >
+          🚪 Logout
+        </button>
       </div>
     </div>
   );
