@@ -323,83 +323,80 @@ const updateProfileImage = asynchandler(async (req,res )=>{
 
 //To do : Make function to update cover Image
 
-const getUserProfile = asynchandler( async (req,res) =>{
-    const {username} = req.params;
-    if (!username || typeof username !== "string" || !username.trim()) {
-        throw new apiError(404, "Username is undefined or invalid");
+const getUserProfile = asynchandler(async (req, res) => {
+    const userId = req.params.id;
+  
+    if (!userId || !ObjectId.isValid(userId)) {
+      throw new apiError(400, "Invalid or missing user ID");
     }
-    
-    //agregation pipeline for sending profile data, when profile is viewed
-    const profile = await User.aggregate(
-        [
-            {
-                $match : {
-                    userName : username?.toLowerCase()
-                }
+  
+    const profile = await User.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "follows",
+          localField: "_id",
+          foreignField: "followingTo",
+          as: "total_followers",
+        },
+      },
+      {
+        $lookup: {
+          from: "follows",
+          localField: "_id",
+          foreignField: "follower",
+          as: "following_to",
+        },
+      },
+      {
+        $addFields: {
+          followersCount: {
+            $size: "$total_followers",
+          },
+          followingToCount: {
+            $size: "$following_to",
+          },
+          isFollowed: {
+            $cond: {
+              if: { $in: [req.user?._id, "$total_followers.follower"] },
+              then: true,
+              else: false,
             },
-            {
-                $lookup: {
-                    from : "follows",
-                    localField : "_id",
-                    foreignField : "followingTo",
-                    as :"total_followers"
-                }
-            },
-            {
-                $lookup: {
-                    from : "follows",
-                    localField : "_id",
-                    foreignField : "follower",
-                    as :"following_to"
-                }
-            },
-            {
-                $addFields: {
-                    followersCount :{
-                        $size : "$total_followers"
-                    },
-                    followingToCount :{
-                        $size : "$following_to"
-                    },
-                    isFollowed : {
-                        $cond:{
-                            if: {$in :[req.user?._id, "$total_followers.follower"]},
-                            then: true,
-                            else : false
-                        }
-                    }
-                }
-            },
-            {
-                $project :{
-                    fullName:1,
-                    userName:1,
-                    email:1,
-                    mobileNo :1,
-                    collegeName:1,
-                    companyName:1,
-                    profileImg:1,
-                    myPosts:1,
-                    savedPosts :1,
-                    likedPosts :1,
-                    followersCount:1,
-                    followingToCount:1,
-                    createdAt:1,
-                    isFollowed: 1
-                }
-            }
-        ]
-    )
-
-    if(!profile?.length){
-        throw new apiError(404, "User not found");
+          },
+        },
+      },
+      {
+        $project: {
+          fullName: 1,
+          userName: 1,
+          email: 1,
+          mobileNo: 1,
+          collegeName: 1,
+          companyName: 1,
+          profileImg: 1,
+          myPosts: 1,
+          savedPosts: 1,
+          likedPosts: 1,
+          followersCount: 1,
+          followingToCount: 1,
+          createdAt: 1,
+          isFollowed: 1,
+        },
+      },
+    ]);
+  
+    if (!profile?.length) {
+      throw new apiError(404, "User not found");
     }
-
-    return res.status(200).json(
-        new apiResponse(200, profile[0], "User profile fetched successfullly")
-    )
-
-} )
+  
+    return res
+      .status(200)
+      .json(new apiResponse(200, profile[0], "User profile fetched successfully"));
+  });
 
 
 const getMyPosts = asynchandler(async (req, res) => {

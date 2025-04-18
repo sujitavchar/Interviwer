@@ -9,6 +9,7 @@ import {
 import "../styles/post.css";
 import EditPostModal from "./EditPostModal";
 import axios from "axios";
+import profileIcon from "../assets/profile_image_icon.png";
 
 const Post = ({
   postId,
@@ -29,7 +30,6 @@ const Post = ({
     id: ownerId,
   } = user || {};
 
-  // Safely initialize with array
   const initialComments = Array.isArray(comments) ? comments : [];
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -40,6 +40,9 @@ const Post = ({
   const [commentList, setCommentList] = useState(initialComments);
   const [showOptions, setShowOptions] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
 
   const words = text.split(" ");
   const wordLimit = 50;
@@ -50,37 +53,38 @@ const Post = ({
   const toggleCommentBox = async () => {
     const newState = !isCommentBoxOpen;
     setIsCommentBoxOpen(newState);
-  
+
     if (newState && commentList.length === 0) {
+      setIsLoadingComments(true);
       try {
         const res = await axios.get(
           `https://interviwer-production.up.railway.app/api/v1/comments/getcomments/${postId}`,
           { withCredentials: true }
         );
-  
-        console.log("Fetched Comments Raw Response:", res.data);
-  
-        const fetchedComments = Array.isArray(res.data?.data) ? res.data.data : [];
-  
-        // Normalize for UI
+
+        const fetchedComments = Array.isArray(res.data?.data)
+          ? res.data.data
+          : [];
+
         const normalizedComments = fetchedComments.map((comment) => ({
           id: comment._id,
           name: comment.userName || "Unknown",
           text: comment.text,
           time: new Date(comment.createdAt).toLocaleString(),
-          profilePic: "https://i.pravatar.cc/40", // or fetch from user later
-          isOwner: comment.userName === user?.name, // check if it's user's comment
+          profilePic: comment.user_profile_image || profileIcon,
+          isOwner: comment.userName === user?.name,
         }));
-  
+
         setCommentList(normalizedComments);
       } catch (err) {
         console.error("Failed to fetch comments:", err);
         alert("Error loading comments");
         setCommentList([]);
+      } finally {
+        setIsLoadingComments(false);
       }
     }
   };
-  
 
   const handleLikeToggle = () => {
     setIsLiked(!isLiked);
@@ -90,35 +94,53 @@ const Post = ({
   const handleCommentSubmit = async () => {
     const trimmedText = commentText.trim();
     if (!trimmedText) return;
-  
+
+    setIsSubmittingComment(true);
     try {
       const res = await axios.post(
         `https://interviwer-production.up.railway.app/api/v1/comments/addcomment/${postId}`,
         { ctext: trimmedText },
         { withCredentials: true }
       );
-  
+
       const newComment = {
-        id: res.data?.data?._id || Date.now(), // fallback id
+        id: res.data?.data?._id || Date.now(),
         name: "You",
         profilePic: "https://i.pravatar.cc/40?img=3",
         text: trimmedText,
         time: "Just now",
         isOwner: true,
       };
-  
+
       setCommentList([newComment, ...commentList]);
       setCommentText("");
-      alert("Comment posted successfully !")
+      alert("Comment posted successfully !");
     } catch (error) {
       console.error("Failed to post comment:", error);
       alert("Failed to add comment. Please try again.");
+    } finally {
+      setIsSubmittingComment(false);
     }
   };
-  
 
-  const handleDeleteComment = (id) => {
-    setCommentList(commentList.filter((comment) => comment.id !== id));
+  const handleDeleteComment = async (commentId) => {
+    setDeletingCommentId(commentId);
+    try {
+      await axios.delete(
+        "https://interviwer-production.up.railway.app/api/v1/comments/deletecomment",
+        {
+          data: { commentId },
+          withCredentials: true,
+        }
+      );
+      setCommentList(commentList.filter((comment) => comment.id !== commentId));
+      alert("Comment deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete comment:", error);
+      alert("Failed to delete comment. Please try again.");
+    } finally {
+      setDeletingCommentId(null);
+    }
   };
 
   const handleDeletePost = async () => {
@@ -209,13 +231,19 @@ const Post = ({
               placeholder="Write a comment..."
               className="comment-input"
             />
-            <button className="submit-btn" onClick={handleCommentSubmit}>
-              Submit
+            <button
+              className="submit-btn"
+              onClick={handleCommentSubmit}
+              disabled={isSubmittingComment}
+            >
+              {isSubmittingComment ? "Posting..." : "Submit"}
             </button>
           </div>
 
           <div className="comment-list">
-            {commentList.length === 0 ? (
+            {isLoadingComments ? (
+              <p className="loading-comments">Loading comments...</p>
+            ) : commentList.length === 0 ? (
               <p className="no-comments">
                 No comments to display, be the first to comment.
               </p>
@@ -238,8 +266,9 @@ const Post = ({
                     <button
                       className="delete-btn"
                       onClick={() => handleDeleteComment(comment.id)}
+                      disabled={deletingCommentId === comment.id}
                     >
-                      <FaTrash size={14} color="red" />
+                      {deletingCommentId === comment.id ? "..." : <FaTrash size={14} color="red" />}
                     </button>
                   )}
                 </div>

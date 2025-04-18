@@ -28,7 +28,7 @@ router.route("/update_password").patch(verifyJWt, updatePassword);
 router.route("/update_fullname").patch(verifyJWt, updateFullname);
 router.route("/update_profileimg").patch(verifyJWt, upload.single("profileImg") ,updateProfileImage); //add for cover image - to do
 router.route("/current-user").get(verifyJWt, getCurrentUser);
-router.route("/profile/:username").get(verifyJWt,getUserProfile);
+router.route("/profile/:id").get(verifyJWt,getUserProfile);
 router.route("/posts").get(verifyJWt, getMyPosts);
 
 

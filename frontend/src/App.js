@@ -4,6 +4,7 @@ import Home from "./pages/Home/home";
 import LandingPage from "./pages/LandingPage/landingpage";
 import Register from "./pages/Register/register";
 import Login from "./pages/Login/login";
+import Profile from "./pages/Profile/profile"
 import { UserProvider } from "./context/usercontext";  
 import "./styles/index.css";
 
@@ -17,6 +18,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </UserProvider>
