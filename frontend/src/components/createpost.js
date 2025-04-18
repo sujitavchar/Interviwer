@@ -54,12 +54,12 @@ const CreatePost = ({ isOpen, onClose }) => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true, // if you're using cookies for auth
+          withCredentials: true, 
         }
       );
       alert("Post created successfully 🎉");
       onClose();
-      window.location.reload(); // reloads the page after modal closes
+      window.location.reload(); 
     } catch (error) {
       console.error("Error creating post:", error);
       alert("Failed to create post");
@@ -74,9 +74,10 @@ const CreatePost = ({ isOpen, onClose }) => {
     try {
       const enhancedText = postText + " Enhance the text before this line. Correct grammar and punctuation. Don't provide any extra information.";
   
-      const response = await axios.post("/api/enhance-text", {
+      const response = await axios.post("https://interviwer-production.up.railway.app/api/v1/content/enhance-text", {
         postText: enhancedText,
-      });
+      },
+      { withCredentials: true });
   
       setPostText(response.data.enhancedText || postText);
     } catch (error) {
