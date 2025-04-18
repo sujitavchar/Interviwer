@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "../styles/createpost.css";
 import axios from "axios";
+// Import GoogleGenAI SDK
+import { GoogleGenAI } from "@google/genai";
 
 // Initialize GoogleGenAI with your API key
-//const ai = new GoogleGenAI({ apiKey: "AIzaSyBShrnrISxlfemGMkYQ4BZ0K9-mCj_ZMpY" });
+const ai = new GoogleGenAI({ apiKey: "AIzaSyBShrnrISxlfemGMkYQ4BZ0K9-mCj_ZMpY" });
 
 const CreatePost = ({ isOpen, onClose }) => {
   const [title, setTitle] = useState("");
@@ -54,12 +56,12 @@ const CreatePost = ({ isOpen, onClose }) => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true, 
+          withCredentials: true, // if you're using cookies for auth
         }
       );
       alert("Post created successfully 🎉");
       onClose();
-      window.location.reload(); 
+      window.location.reload(); // reloads the page after modal closes
     } catch (error) {
       console.error("Error creating post:", error);
       alert("Failed to create post");
@@ -69,17 +71,17 @@ const CreatePost = ({ isOpen, onClose }) => {
   };
 
   const handleRewriteAI = async () => {
-    setAiLoading(true);
+    setAiLoading(true); 
   
     try {
-      const enhancedText = postText + " Enhance the text before this line. Correct grammar and punctuation. Don't provide any extra information.";
+      const enhancedText = postText + " Enhance the text before this line . Correct grammar and punctuation. Dont provide any extra information. If the statement is correct repeat the same statement";
   
-      const response = await axios.post("https://interviwer-production.up.railway.app/api/v1/content/enhance-text", {
-        postText: enhancedText,
-      },
-      { withCredentials: true });
+      const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: enhancedText,
+      });
   
-      setPostText(response.data.enhancedText || postText);
+      setPostText(response.text || postText);
     } catch (error) {
       console.error("Error with AI rewrite:", error);
       alert("Failed to rewrite with AI");
@@ -87,7 +89,6 @@ const CreatePost = ({ isOpen, onClose }) => {
       setAiLoading(false);
     }
   };
-  
   
 
   if (!isOpen) return null;
