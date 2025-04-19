@@ -107,8 +107,8 @@ const Post = ({
 
       const newComment = {
         id: res.data?.data?._id || Date.now(),
-        name: "You",
-        profilePic: "https://i.pravatar.cc/40?img=3",
+        name: user.name ,
+        profilePic: user.profilePic,
         text: trimmedText,
         time: "Just now",
         isOwner: true,
