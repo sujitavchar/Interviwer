@@ -7,10 +7,19 @@ const app = express();
 
 app.set("trust proxy", 1);
 
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
-}))
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
+
 
 
 app.use(express.json({limit: "16kb"}));
