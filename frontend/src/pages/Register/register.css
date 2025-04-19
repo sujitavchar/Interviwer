@@ -136,7 +136,6 @@ h2 {
   cursor: pointer;
 }
 
-
 .register-form input {
   width: 100%;
   padding: 12px 14px;
@@ -239,3 +238,59 @@ input[type="file"] {
 .register-form.started .progress-bar { width: 33%; }
 .register-form.halfway .progress-bar { width: 66%; }
 .register-form.completed .progress-bar { width: 100%; }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+  }
+
+  .register-form-container, .register-image {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .register-form-container {
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  .signup {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .file-input-label {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-container {
+    padding: 15px;
+  }
+
+  .register-form-container {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .signup {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .file-input-label {
+    padding: 8px;
+  }
+
+  .terms {
+    font-size: 0.75rem;
+  }
+}

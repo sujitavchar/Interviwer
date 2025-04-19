@@ -162,13 +162,13 @@
     margin-bottom: 20px;
   }
 
-
   .logout-button-wrapper {
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: 20px; /* Change this from 'right: 20px' to 'left: 20px' */
     z-index: 10;
   }
+  
   
   .logout-button {
     background-color: #f44336;

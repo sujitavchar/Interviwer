@@ -28,7 +28,6 @@ const HomePage = () => {
         
           
           
-          
         if (response.status === 200) {
           setPosts(response.data.data);
         }
@@ -44,7 +43,6 @@ const HomePage = () => {
     <div className="home-container">
       <Navbar username={userName} profileImage={profileImageLink} />
       <Sidebar />
-
       {/* Main Content */}
       <div className="main-content">
         <div className="feed">

@@ -30,6 +30,8 @@ const Post = ({
     id: ownerId,
   } = user || {};
 
+ 
+
   const initialComments = Array.isArray(comments) ? comments : [];
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -148,7 +150,8 @@ const Post = ({
       alert("Not your content...");
       return;
     }
-
+    // console.log("Post owner:", ownerId, typeof ownerId);
+    // console.log("Current user:", currentUserId, typeof currentUserId);
     try {
       await axios.delete(
         "https://interviwer-production.up.railway.app/api/v1/content/deletePost",
@@ -173,17 +176,20 @@ const Post = ({
           <p className="user-name">{name}</p>
           <p className="post-time">{time} ago</p>
         </div>
-        <div className="options-menu">
-          <button className="options-btn" onClick={toggleOptionsMenu}>
-            <FaEllipsisH size={20} />
-          </button>
-          {showOptions && (
-            <div className="options-dropdown">
-              <button onClick={() => setIsEditModalOpen(true)}>Edit</button>
-              <button onClick={handleDeletePost}>Delete</button>
-            </div>
-          )}
-        </div>
+        {ownerId === currentUserId ? (
+          <div className="options-menu">
+            <button className="options-btn" onClick={toggleOptionsMenu}>
+              <FaEllipsisH size={20} />
+            </button>
+            {showOptions && (
+              <div className="options-dropdown">
+                <button onClick={() => setIsEditModalOpen(true)}>Edit</button>
+                <button onClick={handleDeletePost}>Delete</button>
+              </div>
+            )}
+            
+          </div>
+        ) : null}
       </div>
 
       {title && <h3 className="post-title">{title}</h3>}
@@ -268,7 +274,11 @@ const Post = ({
                       onClick={() => handleDeleteComment(comment.id)}
                       disabled={deletingCommentId === comment.id}
                     >
-                      {deletingCommentId === comment.id ? "..." : <FaTrash size={14} color="red" />}
+                      {deletingCommentId === comment.id ? (
+                        "..."
+                      ) : (
+                        <FaTrash size={14} color="red" />
+                      )}
                     </button>
                   )}
                 </div>
