@@ -65,7 +65,7 @@ const PublicProfilePage = () => {
       try {
         // Adding withCredentials to maintain session cookies
         const res = await axios.get(
-          `https://interviwer-production.up.railway.app/api/v1/users/posts/${profileUserId}`,
+          `https://interviwer-production.up.railway.app/api/v1/content/userposts/${profileUserId}`,
           { withCredentials: true }
         );
         

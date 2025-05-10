@@ -4,8 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../styles/post_carousel.css";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import profileIcon from "../assets/profile_image_icon.png"
-
+import profileIcon from "../assets/profile_image_icon.png";
 
 const CustomPrevArrow = (props) => {
   const { onClick } = props;
@@ -56,7 +55,7 @@ const UserPostsCarousel = ({ posts }) => {
       <Slider {...settings}>
         {posts.map((post) => {
           const { _id, title, text, image, ownerDetails } = post;
-          const { fullName } = ownerDetails;
+          const fullName = ownerDetails?.fullName || " "; // Default to 'Anonymous User' if missing
 
           const isExpanded = expandedPostId === _id;
           const wordLimit = 20; // Default word limit
@@ -65,26 +64,36 @@ const UserPostsCarousel = ({ posts }) => {
             <div key={_id} className="carousel-slide">
               <div className="post-container">
                 <div className="post-header">
-                  <img
-                    src={post.profilePic || profileIcon}
-                    alt="User"
-                    className="profile-pic"
-                  />
+                  {/* Profile Image */}
+                  <div className="profile-pic-container">
+                    <img
+                      src={post.profilePic || profileIcon} // Use placeholder if missing
+                      alt="User"
+                      className="profile-pic"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
                   <div className="post-info">
+                    {/* User Name */}
                     <p className="user-name">{fullName}</p>
+
+                    {/* Post Time */}
                     <p className="post-time">
                       {new Date(post.createdAt).toLocaleString()} ago
                     </p>
                   </div>
                 </div>
 
+                {/* Title */}
                 {title && <h3 className="post-title">{title}</h3>}
 
+                {/* Text */}
                 <p className="post-text">
-                  {isExpanded ? text : getTextPreview(text)}
+                  {text ? (isExpanded ? text : getTextPreview(text)) : "No content available"}
                 </p>
 
-                {text.split(" ").length > wordLimit && (
+                {/* Read More/Read Less Button */}
+                {text && text.split(" ").length > wordLimit && (
                   <button
                     className="read-more-btn"
                     onClick={() => setExpandedPostId(isExpanded ? null : _id)}
@@ -93,13 +102,12 @@ const UserPostsCarousel = ({ posts }) => {
                   </button>
                 )}
 
+                {/* Image */}
                 {image && image !== "" && (
                   <div className="post-image-container">
                     <img src={image} alt="Post" className="post-image" />
                   </div>
                 )}
-
-               
               </div>
             </div>
           );
