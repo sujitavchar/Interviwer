@@ -56,7 +56,7 @@ const HomePage = () => {
               user={{
                 name: item.owner.fullName,
                 profilePic: item.owner.profileImg || profileIcon,
-                _id: item.owner._id, // important!
+                _id: item.owner._id, 
               }}
               currentUserId={user?._id}
               time={new Date(item.createdAt).toLocaleTimeString([], {

@@ -22,6 +22,7 @@ const ProfilePage = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
   const [userPosts, setUserPosts] = useState([]);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -41,6 +42,7 @@ const ProfilePage = () => {
         if (profileData) {
           setUserData(profileData);
           setFollowersCount(profileData.followersCount || 0);
+          setIsFollowing(profileData.isFollowed || false);
         } else {
           console.error("Failed to fetch user profile");
         }
@@ -71,6 +73,32 @@ const ProfilePage = () => {
     fetchUserPosts();
   }, [user]);
 
+  const handleFollow = async () => {
+    if (!userData?._id || followLoading) return;
+    setFollowLoading(true);
+    try {
+      await axios.post(
+        "https://interviwer-production.up.railway.app/api/v1/follows/follow",
+        {
+          userIdToFollow: userData._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      const newFollowState = !isFollowing;
+      setIsFollowing(newFollowState);
+      setFollowersCount((prev) => prev + (newFollowState ? 1 : -1));
+    } catch (error) {
+      console.error("Error toggling follow state:", error);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
   if (loading) return <FullPageLoader />;
 
   const profile = {
@@ -83,16 +111,6 @@ const ProfilePage = () => {
     email: userData?.email,
     mobileNo: userData?.mobileNo,
     friends: followersCount,
-  };
-
-  const handleFollow = () => {
-    if (isFollowing) {
-      setIsFollowing(false);
-      setFollowersCount(followersCount - 1);
-    } else {
-      setIsFollowing(true);
-      setFollowersCount(followersCount + 1);
-    }
   };
 
   return (
@@ -116,13 +134,25 @@ const ProfilePage = () => {
 
           <div className="profile-user-info">
             <h1 className="profile-username">{profile.fullName}</h1>
-            <p className="profile-friends">{profile.friends} followers</p>
+            <p className="profile-friends">
+              {followersCount} follower{followersCount !== 1 ? "s" : ""}
+            </p>
           </div>
 
           <div className="profile-actions">
-            <button className="follow-button" onClick={handleFollow}>
-              {isFollowing ? "Unfollow" : "Follow"} 👥
+            <button
+              className="follow-button"
+              onClick={handleFollow}
+              disabled={followLoading}
+            >
+              {followLoading
+                ? "Processing..."
+                : isFollowing
+                  ? "Unfollow"
+                  : "Follow"}{" "}
+              👥
             </button>
+
             <button className="message-button">Message 💬</button>
           </div>
         </div>
@@ -162,9 +192,10 @@ const ProfilePage = () => {
 
           <div className="posts-container">
             {userPosts.length > 0 ? (
-              <> <h3 className="carousel-section-heading"> Recent Posts</h3>
-              <UserPostsCarousel posts={userPosts} /> </>
-              
+              <>
+                <h3 className="carousel-section-heading"> Recent Posts</h3>
+                <UserPostsCarousel posts={userPosts} />
+              </>
             ) : (
               <div className="posts-empty-state">
                 <p className="posts-message">No posts to display yet.</p>

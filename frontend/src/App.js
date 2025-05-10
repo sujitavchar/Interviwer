@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage/landingpage";
 import Register from "./pages/Register/register";
 import Login from "./pages/Login/login";
 import Profile from "./pages/Profile/profile"
+import PublicProfilePage from "./pages/Profile/public_profilepage";
 import { UserProvider } from "./context/usercontext";  
 import "./styles/index.css";
 
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:userId" element={<PublicProfilePage />} />
           </Routes>
         </div>
       </UserProvider>

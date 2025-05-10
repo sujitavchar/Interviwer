@@ -6,6 +6,7 @@ import {
   FaTrash,
   FaEllipsisH,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; 
 import "../styles/post.css";
 import EditPostModal from "./EditPostModal";
 import axios from "axios";
@@ -30,8 +31,7 @@ const Post = ({
     id: ownerId,
   } = user || {};
 
- 
-
+  const navigate = useNavigate(); // <-- Hook to navigate
   const initialComments = Array.isArray(comments) ? comments : [];
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -51,6 +51,10 @@ const Post = ({
 
   const toggleReadMore = () => setIsExpanded(!isExpanded);
   const toggleOptionsMenu = () => setShowOptions(!showOptions);
+
+  const handleProfileClick = () => {
+    navigate(`/profile/${user._id}`);
+  };
 
   const toggleCommentBox = async () => {
     const newState = !isCommentBoxOpen;
@@ -116,7 +120,7 @@ const Post = ({
 
       setCommentList([newComment, ...commentList]);
       setCommentText("");
-      alert("Comment posted successfully !");
+      alert("Comment posted successfully!");
     } catch (error) {
       console.error("Failed to post comment:", error);
       alert("Failed to add comment. Please try again.");
@@ -150,8 +154,6 @@ const Post = ({
       alert("Not your content...");
       return;
     }
-    // console.log("Post owner:", ownerId, typeof ownerId);
-    // console.log("Current user:", currentUserId, typeof currentUserId);
     try {
       await axios.delete(
         "https://interviwer-production.up.railway.app/api/v1/content/deletePost",
@@ -161,7 +163,7 @@ const Post = ({
         }
       );
       if (onDelete) onDelete(postId);
-      alert("Post deleted successfully ! 🎉");
+      alert("Post deleted successfully!");
     } catch (error) {
       console.error("Delete failed:", error);
       alert("Failed to delete post, maybe you are not the owner");
@@ -171,8 +173,14 @@ const Post = ({
   return (
     <div className={`post-container ${isExpanded ? "expanded" : ""}`}>
       <div className="post-header">
-        <img src={profilePic} alt="User" className="profile-pic" />
-        <div className="post-info">
+        <img
+          src={profilePic}
+          alt="User"
+          className="profile-pic"
+          onClick={handleProfileClick}
+          style={{ cursor: "pointer" }}
+        />
+        <div className="post-info" onClick={handleProfileClick} style={{ cursor: "pointer" }}>
           <p className="user-name">{name}</p>
           <p className="post-time">{time} ago</p>
         </div>
@@ -187,7 +195,6 @@ const Post = ({
                 <button onClick={handleDeletePost}>Delete</button>
               </div>
             )}
-            
           </div>
         ) : null}
       </div>

@@ -3,8 +3,8 @@ import {apiError} from "../utils/errorHandler.js";
 import {Post} from "../models/posts.js";
  import { uploadOnCloud } from "../utils/cloudinary.js";
 import {apiResponse} from "../utils/apiResponse.js";
-
-
+import mongoose from "mongoose";
+const { ObjectId } = mongoose.Types;
 
 const getALLPosts = asynchandler(async (req, res) => {
     try {
@@ -165,6 +165,27 @@ const togglePublishStatus = asynchandler( async (req, res) =>{
     return res.status(200).json( new apiResponse(200, post,"Status changed"));
 })
 
+const getPostsOfUser = asynchandler(async (req,res)=> {
+    const userId = req.params.id;
+      
+    if (!userId || !ObjectId.isValid(userId)) {
+        throw new apiError(400, "Invalid or missing user ID");
+    }
+      
+    const posts = await Post.aggregate([
+        {
+          $match: {
+            owner: new mongoose.Types.ObjectId(userId)
+          }
+        },
+        {
+          $sort: { createdAt: -1 } //latest first
+        }
+      ]);
+    
+      return res.status(200).json(
+        new apiResponse(200, posts, "Posts of user fetched successfuly")
+      );
+})
 
-
-export {getALLPosts, createPost,getPostById, updatePost,deletePost, togglePublishStatus};
+export {getALLPosts, createPost,getPostById, updatePost,deletePost, togglePublishStatus, getPostsOfUser};
