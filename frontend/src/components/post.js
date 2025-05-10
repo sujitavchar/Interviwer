@@ -6,7 +6,7 @@ import {
   FaTrash,
   FaEllipsisH,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import "../styles/post.css";
 import EditPostModal from "./EditPostModal";
 import axios from "axios";
@@ -21,7 +21,6 @@ const Post = ({
   image,
   likes,
   comments,
-  shares,
   onDelete,
   currentUserId,
 }) => {
@@ -31,7 +30,7 @@ const Post = ({
     id: ownerId,
   } = user || {};
 
-  const navigate = useNavigate(); // <-- Hook to navigate
+  const navigate = useNavigate();
   const initialComments = Array.isArray(comments) ? comments : [];
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -78,6 +77,7 @@ const Post = ({
           text: comment.text,
           time: new Date(comment.createdAt).toLocaleString(),
           profilePic: comment.user_profile_image || profileIcon,
+          userId: comment.userId, // Ensure userId is present
           isOwner: comment.userName === user?.name,
         }));
 
@@ -115,6 +115,7 @@ const Post = ({
         profilePic: profileIcon,
         text: trimmedText,
         time: "Just now",
+        userId: currentUserId, // Attach userId to the comment
         isOwner: true,
       };
 
@@ -231,7 +232,7 @@ const Post = ({
           <FaComment size={18} /> Comment <span>{commentList.length}</span>
         </button>
         <button className="action-btn">
-          <FaShare size={18} /> Share <span>{shares}</span>
+          <FaShare size={18} /> Share 
         </button>
       </div>
 
@@ -275,7 +276,9 @@ const Post = ({
                     </p>
                     <p className="comment-text">{comment.text}</p>
                   </div>
-                  {comment.isOwner && (
+
+                  {/* Show delete button only for the comment owner */}
+                  {comment.userId === currentUserId && (
                     <button
                       className="delete-btn"
                       onClick={() => handleDeleteComment(comment.id)}
