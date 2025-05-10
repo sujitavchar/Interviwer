@@ -1,17 +1,19 @@
-import mongoose,{Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-
-const followSchema = new Schema({
-    follower: {   //one who is following
-        type: Schema.Types.ObjectId,
-        ref : "User"
+const followSchema = new Schema(
+  {
+    follower: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    followingTo : {  //one to whom User is following
-        typr: Schema.Types.ObjectId,
-        ref: "User"
-    }
-
-},{timestamps: true});
-
+    followingTo: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
 export const Follow = mongoose.model("Follow", followSchema);

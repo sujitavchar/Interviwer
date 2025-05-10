@@ -333,6 +333,8 @@ const getUserProfile = asynchandler(async (req, res) => {
       throw new apiError(400, "Invalid or missing user ID");
     }
   
+    const currentUserId = req.user?._id;
+  
     const profile = await User.aggregate([
       {
         $match: {
@@ -344,7 +346,7 @@ const getUserProfile = asynchandler(async (req, res) => {
           from: "follows",
           localField: "_id",
           foreignField: "followingTo",
-          as: "total_followers",
+          as: "followers",
         },
       },
       {
@@ -352,23 +354,15 @@ const getUserProfile = asynchandler(async (req, res) => {
           from: "follows",
           localField: "_id",
           foreignField: "follower",
-          as: "following_to",
+          as: "following",
         },
       },
       {
         $addFields: {
-          followersCount: {
-            $size: "$total_followers",
-          },
-          followingToCount: {
-            $size: "$following_to",
-          },
+          followersCount: { $size: "$followers" },
+          followingToCount: { $size: "$following" },
           isFollowed: {
-            $cond: {
-              if: { $in: [req.user?._id, "$total_followers.follower"] },
-              then: true,
-              else: false,
-            },
+            $in: [new ObjectId(currentUserId), "$followers.follower"],
           },
         },
       },
@@ -386,8 +380,8 @@ const getUserProfile = asynchandler(async (req, res) => {
           likedPosts: 1,
           followersCount: 1,
           followingToCount: 1,
-          createdAt: 1,
           isFollowed: 1,
+          createdAt: 1,
         },
       },
     ]);
@@ -396,10 +390,11 @@ const getUserProfile = asynchandler(async (req, res) => {
       throw new apiError(404, "User not found");
     }
   
-    return res
-      .status(200)
-      .json(new apiResponse(200, profile[0], "User profile fetched successfully"));
+    return res.status(200).json(
+      new apiResponse(200, profile[0], "User profile fetched successfully")
+    );
   });
+  
 
 
 const getMyPosts = asynchandler(async (req, res) => {
