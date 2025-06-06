@@ -67,7 +67,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "https://interviwer-production.up.railway.app/api/v1/users/register",
+        "https://netwrk.onrender.com/api/v1/users/register",
         formDataToSend,
         {
           headers: {

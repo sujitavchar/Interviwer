@@ -22,7 +22,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("https://interviwer-production.up.railway.app/api/v1/content/feed", {
+        const response = await axios.get("https://netwrk.onrender.com/api/v1/content/feed", {
           withCredentials: true
         });
         

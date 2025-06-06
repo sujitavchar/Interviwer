@@ -38,7 +38,7 @@ const PublicProfilePage = () => {
       try {
         // Adding withCredentials to maintain session cookies
         const res = await axios.get(
-          `https://interviwer-production.up.railway.app/api/v1/users/profile/${profileUserId}`,
+          `https://netwrk.onrender.com/api/v1/users/profile/${profileUserId}`,
           { withCredentials: true }
         );
         
@@ -65,7 +65,7 @@ const PublicProfilePage = () => {
       try {
         // Adding withCredentials to maintain session cookies
         const res = await axios.get(
-          `https://interviwer-production.up.railway.app/api/v1/content/userposts/${profileUserId}`,
+          `https://netwrk.onrender.com/api/v1/content/userposts/${profileUserId}`,
           { withCredentials: true }
         );
         
@@ -90,7 +90,7 @@ const PublicProfilePage = () => {
     setFollowLoading(true);
     try {
       await axios.post(
-        "https://interviwer-production.up.railway.app/api/v1/follows/follow",
+        "https://netwrk.onrender.com/api/v1/follows/follow",
         { userIdToFollow: profileUserId },
         { withCredentials: true }
       );

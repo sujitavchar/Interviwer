@@ -50,7 +50,7 @@ const CreatePost = ({ isOpen, onClose }) => {
     try {
       setLoading(true);
       await axios.post(
-        "https://interviwer-production.up.railway.app/api/v1/content/createpost",
+        "https://netwrk.onrender.com/api/v1/content/createpost",
         formData,
         {
           headers: {

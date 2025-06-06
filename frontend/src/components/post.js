@@ -63,7 +63,7 @@ const Post = ({
       setIsLoadingComments(true);
       try {
         const res = await axios.get(
-          `https://interviwer-production.up.railway.app/api/v1/comments/getcomments/${postId}`,
+          `https://netwrk.onrender.com/api/v1/comments/getcomments/${postId}`,
           { withCredentials: true }
         );
 
@@ -104,7 +104,7 @@ const Post = ({
     setIsSubmittingComment(true);
     try {
       const res = await axios.post(
-        `https://interviwer-production.up.railway.app/api/v1/comments/addcomment/${postId}`,
+        `https://netwrk.onrender.com/api/v1/comments/addcomment/${postId}`,
         { ctext: trimmedText },
         { withCredentials: true }
       );
@@ -134,7 +134,7 @@ const Post = ({
     setDeletingCommentId(commentId);
     try {
       await axios.delete(
-        "https://interviwer-production.up.railway.app/api/v1/comments/deletecomment",
+        "https://netwrk.onrender.com/api/v1/comments/deletecomment",
         {
           data: { commentId },
           withCredentials: true,
@@ -157,7 +157,7 @@ const Post = ({
     }
     try {
       await axios.delete(
-        "https://interviwer-production.up.railway.app/api/v1/content/deletePost",
+        "https://netwrk.onrender.com/api/v1/content/deletePost",
         {
           data: { postId },
           withCredentials: true,

@@ -30,7 +30,7 @@ const ProfilePage = () => {
 
       try {
         const res = await axios.get(
-          `https://interviwer-production.up.railway.app/api/v1/users/profile/${user.id}`,
+          `https://netwrk.onrender.com/api/v1/users/profile/${user.id}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -56,7 +56,7 @@ const ProfilePage = () => {
     const fetchUserPosts = async () => {
       try {
         const res = await axios.get(
-          "https://interviwer-production.up.railway.app/api/v1/users/posts",
+          "https://netwrk.onrender.com/api/v1/users/posts",
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -78,7 +78,7 @@ const ProfilePage = () => {
     setFollowLoading(true);
     try {
       await axios.post(
-        "https://interviwer-production.up.railway.app/api/v1/follows/follow",
+        "https://netwrk.onrender.com/api/v1/follows/follow",
         {
           userIdToFollow: userData._id,
         },
@@ -211,7 +211,7 @@ const ProfilePage = () => {
           onClick={async () => {
             try {
               await axios.post(
-                "https://interviwer-production.up.railway.app/api/v1/users/logout",
+                "https://netwrk.onrender.com/api/v1/users/logout",
                 {},
                 {
                   headers: {

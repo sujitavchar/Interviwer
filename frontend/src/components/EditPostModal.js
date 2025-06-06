@@ -14,7 +14,7 @@ const EditPostModal = ({ postId, currentTitle, currentText, onClose }) => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "https://interviwer-production.up.railway.app/api/v1/content/updatePost",
+        "https://netwrk.onrender.com/api/v1/content/updatePost",
         {
           postId,
           newtitle: newTitle,
